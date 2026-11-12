@@ -1,0 +1,456 @@
+/* Antigravity Ticketing — motion and depth layer.
+   Loads after styles.css. Everything animated is gated by .motion, which motion.js
+   sets unless the visitor prefers reduced motion, so the page is complete without it. */
+
+:root {
+  interpolate-size: allow-keywords;
+}
+
+/* ───────── Reveal system ───────── */
+
+.motion [data-reveal] {
+  --d: calc(var(--i, 0) * 90ms);
+  opacity: 0;
+  translate: 0 36px;
+  scale: 0.985;
+  transition:
+    opacity 0.9s var(--ease) var(--d),
+    translate 1.1s var(--ease) var(--d),
+    scale 1.1s var(--ease) var(--d),
+    filter 0.9s var(--ease) var(--d),
+    transform 0.5s var(--ease),
+    box-shadow 0.45s var(--ease),
+    background-color 0.2s var(--ease),
+    color 0.2s var(--ease);
+}
+.motion [data-reveal="head"] {
+  translate: 0 28px;
+  filter: blur(8px);
+}
+.motion [data-reveal="left"] {
+  translate: -48px 0;
+}
+.motion [data-reveal="right"] {
+  translate: 48px 0;
+}
+.motion [data-reveal="scale"] {
+  translate: 0 24px;
+  scale: 0.95;
+}
+.motion [data-reveal="scene"] {
+  translate: 0 0;
+  scale: 0.8;
+}
+.motion [data-reveal].is-in {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  filter: none;
+}
+
+/* Pointer tilt (cards). rx/ry are written by motion.js on fine pointers only. */
+.motion [data-tilt] {
+  transform: perspective(1100px) translateY(var(--lift, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+.motion [data-tilt].is-tilting {
+  transition: transform 0.12s linear, box-shadow 0.3s var(--ease);
+}
+.plan.is-rec {
+  --lift: -10px;
+}
+@media (max-width: 960px) {
+  .plan.is-rec {
+    --lift: 0px;
+  }
+}
+
+/* ───────── Hero: layered 3D scene ───────── */
+
+.motion .hero__stage {
+  perspective: 1500px;
+  perspective-origin: 50% 20%;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.motion .scene {
+  transform-origin: 50% 100%;
+  transform: rotateX(calc((1 - var(--p, 0)) * 15deg + var(--my, 0) * -2deg)) rotateY(calc(var(--mx, 0) * 4deg));
+}
+.motion .hero__copy {
+  opacity: calc(1 - var(--p, 0) * 0.85);
+  translate: 0 calc(var(--p, 0) * -36px);
+}
+.motion .hero__ticket {
+  transform: translateZ(90px) rotateY(-7deg) rotateZ(1.5deg);
+}
+.motion .hero__scan {
+  transform: translateZ(56px) rotateY(5deg);
+}
+@keyframes float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+/* ───────── 3D icon tiles ───────── */
+
+.strip li {
+  perspective: 500px;
+}
+.strip li .icon {
+  border-radius: 16px;
+  background: linear-gradient(150deg, #ffffff 0%, #e6f0ff 52%, #cfe2ff 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -3px 6px rgb(19 102 240 / 0.1),
+    0 2px 0 #b6d0f6,
+    0 14px 20px -8px rgb(19 102 240 / 0.4);
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.strip li:hover .icon {
+  transform: translateY(-4px) rotateX(14deg) rotateY(-14deg);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -3px 6px rgb(19 102 240 / 0.1),
+    6px 3px 0 #b6d0f6,
+    10px 22px 24px -10px rgb(19 102 240 / 0.45);
+}
+
+/* ───────── 3D bar chart ───────── */
+
+.bars {
+  --d: 10px;
+  gap: 16px;
+  height: 124px;
+  padding: var(--d) var(--d) 0 0;
+}
+.bars i {
+  --front: var(--sky-pale);
+  --top: #f3f9ff;
+  --side: #a8cbef;
+  position: relative;
+  border-radius: 0;
+  background: var(--front);
+  transition: height 1.1s var(--ease) calc(var(--k, 0) * 70ms), opacity 0.6s var(--ease) calc(var(--k, 0) * 70ms);
+}
+.bars i:nth-child(n + 4):nth-child(-n + 8) {
+  --front: var(--blue);
+  --top: #5b9bff;
+  --side: #0a49b8;
+  background: var(--front);
+}
+.bars i::before,
+.bars i::after {
+  content: "";
+  position: absolute;
+}
+.bars i::before {
+  left: 0;
+  bottom: 100%;
+  width: 100%;
+  height: var(--d);
+  background: var(--top);
+  transform-origin: left bottom;
+  transform: skewX(-45deg);
+}
+.bars i::after {
+  left: 100%;
+  top: 0;
+  width: var(--d);
+  height: 100%;
+  background: var(--side);
+  transform-origin: left top;
+  transform: skewY(-45deg);
+}
+.motion .b-d:not(.is-in) .bars i {
+  height: 0;
+  opacity: 0;
+}
+
+/* Inner art of bento cards, staged on reveal */
+.builder__row,
+.gates__row,
+.mail__row,
+.mail__card {
+  transition: opacity 0.7s var(--ease) calc(var(--k, 0) * 90ms + 200ms), translate 0.9s var(--ease) calc(var(--k, 0) * 90ms + 200ms);
+}
+.motion .b-a:not(.is-in) .builder__row,
+.motion .b-c:not(.is-in) .gates__row {
+  opacity: 0;
+  translate: 28px 0;
+}
+.motion .b-b:not(.is-in) .mail__row,
+.motion .b-b:not(.is-in) .mail__card {
+  opacity: 0;
+  translate: 0 -14px;
+}
+.switch,
+.switch::after {
+  transition: right 0.5s var(--ease) 1s, background-color 0.4s var(--ease) 1s;
+}
+.motion .b-a:not(.is-in) .switch {
+  background: #c5d6ee;
+}
+.motion .b-a:not(.is-in) .switch::after {
+  right: 17px;
+}
+
+/* ───────── Lucky draw: extruded wheel ───────── */
+
+.wheel {
+  perspective: 820px;
+}
+.wheel::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -26px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(10 40 110 / 0.32), transparent);
+  transition: opacity 0.6s var(--ease);
+}
+.wheel__tilt {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(24deg) rotateY(-9deg);
+  transition: transform 1s var(--ease);
+}
+.wheel:hover .wheel__tilt {
+  transform: rotateX(16deg) rotateY(-5deg);
+}
+.wheel.is-spinning .wheel__tilt {
+  transform: rotateX(9deg) rotateY(0deg);
+}
+.wheel__disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform-style: preserve-3d;
+}
+.wheel__disc svg {
+  width: 100%;
+  height: 100%;
+}
+.wheel__disc::before,
+.wheel__disc::after,
+.wheel__tilt::before,
+.wheel__tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.wheel__tilt::before {
+  background: #0d4fc4;
+  transform: translateZ(-3px);
+}
+.wheel__tilt::after {
+  background: #0b44a8;
+  transform: translateZ(-6px);
+}
+.wheel__disc::before {
+  background: #093a90;
+  transform: translateZ(-9px);
+}
+.wheel__disc::after {
+  background: #072d73;
+  transform: translateZ(-12px);
+}
+.wheel__pin {
+  transform: translateZ(18px);
+}
+
+/* ───────── Photo wall: flat grid, staged reveal ───────── */
+
+.wall div {
+  transition: transform 0.7s var(--ease) calc(var(--k, 0) * 80ms), opacity 0.7s var(--ease) calc(var(--k, 0) * 80ms);
+}
+.wall div.pop {
+  transform: scale(1.04);
+  transition-delay: 0ms;
+}
+.motion .m-2:not(.is-in) .wall div {
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+}
+
+/* Module card art, staged on reveal */
+.board li::before {
+  transform-origin: left;
+  transition: transform 1.1s var(--ease) calc(var(--k, 0) * 120ms + 250ms);
+}
+.motion .m-3:not(.is-in) .board li::before {
+  transform: scaleX(0);
+}
+.quest li {
+  transition: opacity 0.7s var(--ease) calc(var(--k, 0) * 100ms + 250ms), translate 0.9s var(--ease) calc(var(--k, 0) * 100ms + 250ms);
+}
+.motion .m-4:not(.is-in) .quest li {
+  opacity: 0;
+  translate: 24px 0;
+}
+
+/* Registration ticket: flips into place */
+@keyframes pop {
+  from {
+    opacity: 0.2;
+    transform: perspective(700px) rotateX(-26deg) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ───────── FAQ: smooth disclosure ───────── */
+
+.qa::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition: block-size 0.45s var(--ease), content-visibility 0.45s var(--ease) allow-discrete;
+}
+.qa[open]::details-content {
+  block-size: auto;
+}
+
+/* ───────── Closing: floating 3D tickets ───────── */
+
+.closing .wrap {
+  position: relative;
+  z-index: 1;
+}
+.scene3d {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  perspective: 1300px;
+  pointer-events: none;
+}
+.scene3d__in {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--cx, 0) * 7deg)) rotateX(calc(var(--cy, 0) * -5deg));
+}
+.t3d {
+  position: absolute;
+  width: 208px;
+  padding: 18px;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--ink);
+  transform-style: preserve-3d;
+  animation: bob 9s ease-in-out infinite;
+}
+.t3d::before,
+.t3d::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.t3d::before {
+  background: #cfe0f8;
+  transform: translateZ(-5px);
+}
+.t3d::after {
+  background: #9fc0ee;
+  transform: translateZ(-10px);
+  box-shadow: 0 40px 56px -22px rgb(4 24 90 / 0.55);
+}
+.t3d--a {
+  left: 5%;
+  top: 70px;
+  transform: translateZ(40px) rotateY(24deg) rotateX(6deg) rotateZ(-7deg);
+}
+.t3d--b {
+  right: 5%;
+  top: 150px;
+  width: 224px;
+  animation-delay: -4s;
+  transform: translateZ(70px) rotateY(-26deg) rotateX(8deg) rotateZ(6deg);
+}
+.t3d__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.t3d__name {
+  margin-top: 10px;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.t3d__perf {
+  margin: 14px -18px;
+  border-top: 2px dashed #d5e3f6;
+}
+.t3d__qr {
+  display: block;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto;
+  color: var(--ink);
+}
+.t3d__code {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+@keyframes bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -14px;
+  }
+}
+@media (max-width: 1099px) {
+  .scene3d {
+    display: none;
+  }
+}
+
+/* ───────── Reduced motion: keep depth, drop movement ───────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .t3d,
+  .hero__ticket,
+  .hero__scan {
+    animation: none !important;
+  }
+}
+
+/* ───────── Safety: no horizontal overflow from staged elements ───────── */
+
+html {
+  overflow-x: clip;
+}
+@media (max-width: 960px) {
+  .motion [data-reveal="left"],
+  .motion [data-reveal="right"] {
+    translate: 0 36px;
+  }
+}

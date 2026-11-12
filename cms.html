@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Antigravity CMS — Superadmin &amp; Event Organizer</title>
+  <meta name="theme-color" content="#cfe4fa">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231366f0'/%3E%3Cpath d='M9 22l7-14 7 14M11.8 17h8.4' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --ink: #0a1a33;
+      --ink-2: #3d4f6b;
+      --ink-3: #5a6b85;
+      --blue: #1366f0;
+      --blue-ink: #0c54d1;
+      --blue-soft: #e8f1fe;
+      --blue-tint: #f4f8fe;
+      --sky-mid: #78baf3;
+      --sky-pale: #d6ecfd;
+      --white: #fff;
+      --line: #e4ecf7;
+      --ok: #067a52;
+      --ok-bg: #e3f6ee;
+      --warn: #a8420a;
+      --warn-bg: #fff0e3;
+      --r-lg: 24px;
+      --r-md: 16px;
+      --r-sm: 12px;
+      --shadow: 0 1px 2px rgb(10 26 51 / 0.04), 0 14px 36px -12px rgb(19 102 240 / 0.16);
+      --shadow-lift: 0 2px 4px rgb(10 26 51 / 0.05), 0 28px 56px -14px rgb(10 40 110 / 0.28);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font);
+      font-size: 0.9375rem;
+      line-height: 1.55;
+      color: var(--ink);
+      background: linear-gradient(180deg, #cfe4fa 0, #e6f1fd 360px, #f3f7fd 100%) fixed;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    h1, h2, h3, h4, p, ul, ol { margin: 0; padding: 0; }
+    ul, ol { list-style: none; }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    svg { display: block; }
+    ::selection { background: var(--blue); color: #fff; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 10px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .num { font-variant-numeric: tabular-nums; }
+
+    .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+    .ic--sm { width: 16px; height: 16px; }
+
+    /* ───── App frame ───── */
+    .app {
+      --sw: 280px;
+      display: grid;
+      grid-template-columns: var(--sw) minmax(0, 1fr);
+      height: calc(100dvh - 32px);
+      margin: 16px;
+      border-radius: var(--r-lg);
+      background: #fff;
+      box-shadow: var(--shadow-lift);
+      overflow: hidden;
+      transition: grid-template-columns 0.55s var(--ease);
+      animation: frame-in 0.8s var(--ease) both;
+    }
+    .app[data-collapsed] { --sw: 76px; }
+    @keyframes frame-in { from { opacity: 0; transform: translateY(16px) scale(0.99); } to { opacity: 1; transform: none; } }
+
+    /* ───── Sidebar ───── */
+    .side {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 18px 16px 14px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 1px 0 0 var(--line);
+      z-index: 3;
+    }
+    .side__top { display: flex; align-items: center; justify-content: space-between; height: 44px; padding-left: 6px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.125rem; letter-spacing: -0.02em; white-space: nowrap; }
+    .brand__mark { width: 32px; height: 32px; border-radius: 10px; background: var(--blue); color: #fff; display: grid; place-items: center; flex: none; }
+    .fade { transition: opacity 0.3s var(--ease); }
+    .app[data-collapsed] .fade { opacity: 0; pointer-events: none; }
+    .icon-btn {
+      display: grid; place-items: center; width: 40px; height: 40px; flex: none;
+      border: 0; border-radius: var(--r-sm); background: transparent; color: var(--ink-3);
+      transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+    }
+    .icon-btn:hover { background: var(--blue-tint); color: var(--blue-ink); }
+    .icon-btn .ic { transition: transform 0.55s var(--ease); }
+    .app[data-collapsed] #sideToggle .ic { transform: scaleX(-1); }
+
+    .ws {
+      display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px; padding: 8px;
+      border: 0; border-radius: var(--r-md); background: var(--blue-tint); text-align: left;
+      transition: background-color 0.2s var(--ease);
+    }
+    .ws:hover { background: var(--blue-soft); }
+    .ws__tile { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; color: #fff; background: linear-gradient(150deg, #5b9bff, #1366f0); box-shadow: 0 8px 14px -8px rgb(19 102 240 / 0.7); }
+    .ws__text { display: grid; min-width: 0; flex: 1; line-height: 1.3; }
+    .ws__text b { font-size: 0.875rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ws__text span { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--ink-3); white-space: nowrap; }
+    .ws > .ic { color: var(--ink-3); }
+
+    .nav { display: grid; gap: 2px; margin-top: 14px; }
+    .nav-i {
+      position: relative; display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 12px;
+      border: 0; border-radius: var(--r-sm); background: transparent; color: var(--ink-2);
+      font-weight: 600; font-size: 0.9375rem; text-align: left; white-space: nowrap; width: 100%;
+      transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+    }
+    .nav-i:hover { background: var(--blue-tint); color: var(--ink); }
+    .nav-i.is-active { background: var(--blue-soft); color: var(--blue-ink); }
+    .nav-i.is-active::before {
+      content: ""; position: absolute; left: -16px; top: 12px; bottom: 12px; width: 4px; border-radius: 0 4px 4px 0; background: var(--blue);
+    }
+    .nav-i > span { flex: 1; }
+    .nav-i .chev { color: var(--ink-3); }
+    .nav-i .badge { min-width: 22px; padding: 0 7px; border-radius: 999px; background: var(--warn-bg); color: var(--warn); font-size: 0.6875rem; font-weight: 800; line-height: 22px; text-align: center; }
+    .app[data-collapsed] .nav-i .badge { opacity: 0; }
+
+    .side__scroll { flex: 1; min-height: 0; overflow: auto; margin: 6px -16px 0; padding: 0 16px 14px; scrollbar-width: none; -webkit-mask-image: linear-gradient(#000 calc(100% - 22px), transparent); mask-image: linear-gradient(#000 calc(100% - 22px), transparent); }
+    .side__scroll::-webkit-scrollbar { display: none; }
+    .side__label {
+      display: flex; align-items: center; gap: 8px; height: 36px; margin-top: 8px; padding: 0 12px;
+      font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.07em; color: var(--ink-3); white-space: nowrap;
+      border-top: 1px solid var(--line);
+    }
+    .side__label .ic { width: 14px; height: 14px; }
+    .side__label > span { flex: 1; }
+    .ev { gap: 12px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex: none; margin-left: auto; margin-right: 4px; }
+    .dot--ok { background: #10b981; }
+    .dot--warn { background: #f59e0b; }
+    .ev .ic { color: var(--sky-mid); }
+    .nav-i.ev.is-active { background: transparent; color: var(--ink); font-weight: 800; }
+    .nav-i.ev.is-active::before { display: none; }
+    .ev.is-active .ic { color: var(--blue); }
+
+    @media (max-height: 960px) { .portal { display: none; } }
+    .side__bottom { padding-top: 8px; border-top: 1px solid var(--line); display: grid; gap: 2px; }
+    .user { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 8px; border-radius: var(--r-md); }
+    .avatar {
+      width: 40px; height: 40px; flex: none; border-radius: 50%; display: grid; place-items: center;
+      background: var(--blue-soft); color: var(--blue-ink); font-size: 0.8125rem; font-weight: 800;
+    }
+    .user__text { display: grid; min-width: 0; line-height: 1.3; flex: 1; white-space: nowrap; }
+    .user__text b { font-size: 0.875rem; }
+    .user__text span { font-size: 0.75rem; color: var(--ink-3); }
+
+    /* ───── Main ───── */
+    .main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-width: 0; min-height: 0; background: var(--blue-tint); }
+    .top {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 72px; padding: 0 28px;
+      background: #fff; box-shadow: 0 1px 0 var(--line);
+    }
+    .top__l { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    #menuBtn { display: none; }
+    .page-ico { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--blue-soft); color: var(--blue-ink); }
+    .top h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+    .top__r { display: flex; align-items: center; gap: 12px; }
+    .search {
+      display: flex; align-items: center; gap: 10px; width: 300px; height: 44px; padding: 0 8px 0 14px;
+      border-radius: var(--r-sm); background: var(--blue-tint); box-shadow: inset 0 0 0 1px var(--line);
+      transition: box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+    }
+    .search:hover { box-shadow: inset 0 0 0 1px #c3d5ee; }
+    .search:focus-within { background: #fff; box-shadow: inset 0 0 0 2px var(--blue), 0 0 0 4px rgb(19 102 240 / 0.14); }
+    .search .ic { color: var(--ink-3); }
+    .search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font-size: 0.875rem; }
+    .search input::placeholder { color: #5f6f88; }
+    .kbd { padding: 3px 8px; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font-size: 0.6875rem; font-weight: 700; color: var(--ink-3); white-space: nowrap; }
+    .bell { position: relative; }
+    .bell i { position: absolute; right: 10px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 2px #fff; }
+    .vr { width: 1px; height: 28px; background: var(--line); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px;
+      border: 0; border-radius: 999px; font-weight: 600; font-size: 0.875rem; white-space: nowrap;
+      transition: background-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn--primary { background: var(--blue); color: #fff; box-shadow: 0 8px 20px -8px rgb(19 102 240 / 0.7); }
+    .btn--primary:hover { background: var(--blue-ink); }
+    .btn--line { height: 40px; padding: 0 16px; background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+    .btn--line:hover { box-shadow: inset 0 0 0 1px #c3d5ee; background: var(--blue-tint); }
+    .btn--line[aria-expanded="true"], .btn--line.has-value { box-shadow: inset 0 0 0 2px var(--blue); color: var(--blue-ink); }
+    .btn--soft { height: 34px; padding: 0 14px; background: var(--blue-soft); color: var(--blue-ink); font-size: 0.8125rem; }
+    .btn--soft:hover { background: #d7e6fd; color: #0a47b3; }
+
+    .scroll { overflow: auto; padding: 24px 28px 40px; scroll-behavior: smooth; }
+    .scroll::-webkit-scrollbar { width: 12px; }
+    .scroll::-webkit-scrollbar-thumb { background: #bcd3f0; border-radius: 12px; border: 3px solid var(--blue-tint); }
+    .scroll { scrollbar-color: #bcd3f0 var(--blue-tint); }
+
+    .rise { animation: rise 0.8s var(--ease) both; animation-delay: calc(var(--n, 0) * 70ms + 150ms); }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+    .ctx { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+    .ctx h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1.2; }
+    .ctx p { margin-top: 4px; color: var(--ink-3); font-size: 0.875rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+      font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.01em; background: var(--blue-soft); color: var(--blue-ink); white-space: nowrap;
+    }
+    .chip--ok { background: var(--ok-bg); color: var(--ok); }
+    .chip--warn { background: var(--warn-bg); color: var(--warn); }
+    .chip--mute { background: #eaf0f8; color: var(--ink-2); }
+    .chip--dark { background: var(--ink); color: #fff; }
+
+    .seg { position: relative; display: inline-grid; grid-auto-flow: column; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+    .seg button { position: relative; z-index: 1; height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; font-size: 0.8125rem; font-weight: 700; color: var(--ink-3); transition: color 0.3s var(--ease); }
+    .seg button[aria-checked="true"] { color: #fff; }
+    .seg__thumb { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--blue); box-shadow: 0 6px 14px -6px rgb(19 102 240 / 0.7); transition: transform 0.55s var(--ease), width 0.55s var(--ease); }
+
+    .card { background: #fff; border-radius: var(--r-md); box-shadow: var(--shadow); }
+
+    /* KPI strip */
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .kpi { display: grid; gap: 6px; padding: 22px 24px; align-content: start; }
+    .kpi + .kpi { box-shadow: -1px 0 0 var(--line); }
+    .kpi__l { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; font-weight: 600; color: var(--ink-2); }
+    .kpi__l .ic { color: var(--ink-3); }
+    .kpi__v { font-size: 2.125rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+    .kpi__d { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 0.8125rem; font-weight: 600; color: var(--ink-3); }
+    .d { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: var(--ok); }
+    .d.is-down { color: var(--warn); }
+    .d .ic { width: 14px; height: 14px; stroke-width: 2.2; }
+
+    .grid2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; margin-top: 20px; }
+    .chart { padding: 22px 24px 18px; min-width: 0; }
+    .chart__h { display: flex; align-items: center; gap: 12px; }
+    .chart__h h3 { font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+    .tile { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--blue-tint); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+    .legend { display: flex; align-items: center; gap: 14px; margin-left: auto; font-size: 0.75rem; font-weight: 600; color: var(--ink-3); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+    .chart__big { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; margin: 18px 0 4px; }
+    .chart__big b { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; }
+    .chart__big span { font-size: 0.8125rem; font-weight: 600; color: var(--ink-3); }
+    .plot { position: relative; margin-top: 8px; min-height: 224px; }
+    .plot svg { overflow: visible; }
+    .plot .lab { font-size: 11px; font-weight: 600; fill: var(--ink-3); transition: fill 0.2s var(--ease); }
+    .plot .grp.is-on .lab { fill: var(--ink); font-weight: 800; }
+    .plot .bg { fill: var(--blue-tint); opacity: 0; transition: opacity 0.3s var(--ease); }
+    .plot .grp.is-on .bg { opacity: 1; }
+    .plot .grp { outline: none; cursor: pointer; }
+    .plot .grp:focus-visible .bg { opacity: 1; stroke: var(--blue); stroke-width: 2; }
+    .plot .bar { transform-box: fill-box; transform-origin: 50% 100%; transition: opacity 0.3s var(--ease); }
+    .plot.is-anim .bar { animation: grow 0.9s var(--ease) both; animation-delay: calc(var(--i) * 45ms); }
+    @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    .plot .tickl { font-size: 11px; font-weight: 600; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+    .plot .grid { stroke: var(--line); stroke-dasharray: 3 5; }
+    .plot .ln { fill: none; stroke: var(--blue); stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round; }
+    .plot.is-anim .ln { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.4s var(--ease) 0.1s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .plot.is-anim .area { animation: fade 1s var(--ease) 0.5s both; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    .plot .cross { stroke: #9bb4d8; stroke-dasharray: 3 4; transition: opacity 0.2s var(--ease); }
+    .plot .mk { fill: #fff; stroke: var(--blue); stroke-width: 2.5; }
+    .plot .halo { fill: rgb(19 102 240 / 0.16); }
+    .tip {
+      position: absolute; z-index: 2; min-width: 132px; padding: 10px 12px; border-radius: var(--r-sm); background: #fff; color: var(--ink);
+      box-shadow: 0 2px 4px rgb(10 26 51 / 0.06), 0 16px 32px -10px rgb(10 40 110 / 0.35); font-size: 0.75rem; pointer-events: none;
+      transform: translate(-50%, calc(-100% - 12px)); transition: left 0.25s var(--ease), top 0.25s var(--ease), opacity 0.2s var(--ease); white-space: nowrap; opacity: 0;
+    }
+    .tip.is-on { opacity: 1; }
+    .tip b { display: block; margin-bottom: 4px; font-size: 0.75rem; color: var(--ink-3); font-weight: 600; }
+    .tip div { display: flex; align-items: center; justify-content: space-between; gap: 14px; font-weight: 600; color: var(--ink-2); }
+    .tip div i { width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; display: inline-block; background: var(--c); }
+    .tip em { font-style: normal; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .tip .d { font-size: 0.75rem; }
+    .tip .big { font-size: 1rem; font-weight: 800; color: var(--ink); }
+
+    /* Tabs */
+    .tabs-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 28px; box-shadow: 0 1px 0 var(--line); }
+    .tabs { position: relative; display: flex; gap: 6px; }
+    .tabs button { position: relative; height: 48px; padding: 0 14px; border: 0; background: transparent; font-weight: 600; font-size: 0.9375rem; color: var(--ink-3); transition: color 0.25s var(--ease); display: inline-flex; align-items: center; gap: 8px; }
+    .tabs button:hover { color: var(--ink); }
+    .tabs button[aria-selected="true"] { color: var(--blue-ink); font-weight: 700; }
+    .tabs button .chip { padding: 2px 8px; }
+    .tabs__bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; border-radius: 3px 3px 0 0; background: var(--blue); transition: transform 0.55s var(--ease), width 0.55s var(--ease); }
+    .tools { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; flex-wrap: wrap; }
+    .tools .search { width: 240px; height: 40px; background: #fff; }
+    .panel { margin-top: 20px; animation: panel-in 0.55s var(--ease) both; }
+    .panel[hidden] { display: none; }
+    @keyframes panel-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+    /* Kanban */
+    .board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(236px, 1fr); gap: 16px; overflow-x: auto; padding: 4px 4px 14px; margin: -4px; scroll-snap-type: x proximity; }
+    .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; scroll-snap-align: start; }
+    .col__h { display: flex; align-items: center; justify-content: space-between; }
+    .col__t { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 10px; font-weight: 700; font-size: 0.875rem; }
+    .col__t b { min-width: 22px; padding: 0 6px; border-radius: 6px; background: rgb(255 255 255 / 0.7); font-size: 0.75rem; line-height: 22px; text-align: center; font-variant-numeric: tabular-nums; }
+    .col--menunggu .col__t { background: var(--warn-bg); color: var(--warn); }
+    .col--disetujui .col__t { background: var(--blue-soft); color: var(--blue-ink); }
+    .col--terkirim .col__t { background: #eaf0f8; color: var(--ink-2); }
+    .col--checkin .col__t { background: var(--ok-bg); color: var(--ok); }
+    .col__body { display: flex; flex-direction: column; gap: 12px; min-height: 140px; padding: 4px; margin: -4px; border-radius: var(--r-md); transition: background-color 0.25s var(--ease), box-shadow 0.25s var(--ease); }
+    .col__body.is-over { background: var(--blue-soft); box-shadow: inset 0 0 0 2px #9fc0ee; }
+    .empty { display: grid; place-items: center; min-height: 100px; border-radius: var(--r-md); box-shadow: inset 0 0 0 1.5px #cfe0f6; color: var(--ink-3); font-size: 0.8125rem; font-weight: 600; }
+    .pcard {
+      display: grid; gap: 10px; padding: 16px; border-radius: var(--r-md); background: #fff; box-shadow: var(--shadow); cursor: grab;
+      transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), opacity 0.2s var(--ease);
+      animation: card-in 0.5s var(--ease) both;
+    }
+    @keyframes card-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+    .pcard:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgb(10 26 51 / 0.05), 0 22px 40px -14px rgb(19 102 240 / 0.3); }
+    .pcard.is-drag { opacity: 0.4; transform: rotate(-1.5deg) scale(0.98); }
+    .pcard__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .pcard h4 { font-size: 0.9375rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+    .pcard .meta { display: flex; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--ink-3); font-weight: 500; }
+    .pcard .meta .ic { width: 16px; height: 16px; }
+    .pcard__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; box-shadow: 0 -1px 0 var(--line); }
+    .pcard__foot .avatar { width: 30px; height: 30px; font-size: 0.6875rem; }
+    .code { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+    /* Table */
+    .tablecard { overflow: hidden; }
+    .tablewrap { overflow: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th { position: sticky; top: 0; padding: 0 20px; height: 48px; text-align: left; background: var(--blue-tint); font-size: 0.6875rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); white-space: nowrap; }
+    th button { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; }
+    th button:hover { color: var(--blue-ink); }
+    th button .ic { width: 14px; height: 14px; opacity: 0.5; transition: transform 0.3s var(--ease); }
+    th[aria-sort] button { color: var(--blue-ink); }
+    th[aria-sort] button .ic { opacity: 1; }
+    th[aria-sort="ascending"] button .ic { transform: rotate(180deg); }
+    td { padding: 14px 20px; box-shadow: 0 1px 0 var(--line); font-size: 0.875rem; font-variant-numeric: tabular-nums; vertical-align: middle; }
+    tbody tr { transition: background-color 0.2s var(--ease); }
+    tbody tr:hover { background: var(--blue-tint); }
+    tbody tr:last-child td { box-shadow: none; }
+    .who { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+    .who .avatar { width: 34px; height: 34px; font-size: 0.6875rem; }
+    .foot-note { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; font-size: 0.8125rem; color: var(--ink-3); font-weight: 500; box-shadow: 0 -1px 0 var(--line); }
+
+    /* Timeline */
+    .tl { padding: 8px 8px; }
+    .tl li { position: relative; display: grid; grid-template-columns: 56px 20px minmax(0, 1fr); gap: 12px; padding: 12px 16px; animation: card-in 0.5s var(--ease) both; }
+    .tl time { font-size: 0.8125rem; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; padding-top: 1px; }
+    .tl .pt { position: relative; display: grid; place-items: start center; }
+    .tl .pt i { width: 12px; height: 12px; margin-top: 5px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); position: relative; z-index: 1; }
+    .tl li.ok .pt i { background: #10b981; box-shadow: 0 0 0 4px var(--ok-bg); }
+    .tl li.warn .pt i { background: #f59e0b; box-shadow: 0 0 0 4px var(--warn-bg); }
+    .tl .pt::after { content: ""; position: absolute; top: 20px; bottom: -28px; width: 2px; background: var(--line); }
+    .tl li:last-child .pt::after { display: none; }
+    .tl p { font-size: 0.9375rem; color: var(--ink-2); }
+    .tl p b { color: var(--ink); font-weight: 700; }
+
+    .note { margin-top: 28px; text-align: center; font-size: 0.8125rem; color: var(--ink-3); }
+
+    /* Popovers (fixed, so the sidebar can clip without clipping them) */
+    .pop {
+      position: fixed; z-index: 60; min-width: 240px; max-width: calc(100vw - 16px); padding: 8px; border-radius: var(--r-md); background: #fff;
+      box-shadow: 0 2px 4px rgb(10 26 51 / 0.06), 0 24px 48px -12px rgb(10 40 110 / 0.35);
+      visibility: hidden; opacity: 0; transform: translateY(-8px) scale(0.98); transform-origin: top left; pointer-events: none;
+      transition: opacity 0.25s var(--ease), transform 0.35s var(--ease), visibility 0s 0.25s;
+    }
+    .pop.is-open { visibility: visible; opacity: 1; transform: none; pointer-events: auto; transition-delay: 0s; }
+    .pop h5 { margin: 6px 10px 6px; font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+    .pop button.opt, .pop label.opt {
+      display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 8px 10px; border: 0; border-radius: var(--r-sm);
+      background: transparent; text-align: left; font-weight: 600; font-size: 0.875rem; cursor: pointer; transition: background-color 0.2s var(--ease);
+    }
+    .pop .opt:hover { background: var(--blue-tint); }
+    .pop .opt .tile { width: 32px; height: 32px; border-radius: 10px; }
+    .pop .opt small { display: block; font-size: 0.75rem; font-weight: 500; color: var(--ink-3); }
+    .pop .opt > span:not(.tile):not(.ck) { flex: 1; min-width: 0; }
+    .pop .opt .tile { flex: none; }
+    .pop .opt .ck { color: var(--blue); opacity: 0; }
+    .pop .opt[aria-checked="true"] .ck { opacity: 1; }
+    .pop .sep { height: 1px; margin: 6px 4px; background: var(--line); }
+    .pop input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--blue); margin: 0; }
+    .pop .ntf { display: grid; grid-template-columns: 10px 1fr; gap: 12px; padding: 10px; border-radius: var(--r-sm); font-size: 0.8125rem; color: var(--ink-2); font-weight: 500; }
+    .pop .ntf i { width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: #f59e0b; }
+    .pop .ntf i.b { background: var(--blue); }
+    .pop .ntf i.g { background: #10b981; }
+    .pop .ntf b { display: block; color: var(--ink); font-weight: 700; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 28px; z-index: 80; display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 32px);
+      padding: 12px 18px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 0.875rem; font-weight: 600;
+      box-shadow: 0 18px 36px -12px rgb(10 26 51 / 0.5); transform: translate(-50%, 24px); opacity: 0; pointer-events: none;
+      transition: opacity 0.3s var(--ease), transform 0.5s var(--ease);
+    }
+    .toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+    .scrim { position: fixed; inset: 0; z-index: 40; background: rgb(10 26 51 / 0.35); opacity: 0; pointer-events: none; transition: opacity 0.4s var(--ease); }
+
+    /* ───── Responsive ───── */
+    @media (max-width: 1180px) {
+      .grid2 { grid-template-columns: 1fr; }
+      .search { width: 220px; }
+    }
+    @media (max-width: 960px) {
+      body { overflow: auto; }
+      .app { --sw: 1fr; display: block; height: 100dvh; margin: 0; border-radius: 0; box-shadow: none; overflow: hidden; }
+      .app[data-collapsed] { --sw: 1fr; }
+      .main { height: 100dvh; }
+      .side {
+        position: fixed; inset: 0 auto 0 0; z-index: 50; width: min(320px, 86vw); transform: translateX(-102%); transition: transform 0.55s var(--ease);
+        box-shadow: var(--shadow-lift);
+      }
+      .app[data-collapsed] .fade { opacity: 1; pointer-events: auto; }
+      .app[data-drawer] .side { transform: none; }
+      .app[data-drawer] .scrim { opacity: 1; pointer-events: auto; }
+      .side .nav-i.is-active::before { left: -16px; }
+      #menuBtn { display: grid; }
+      #sideToggle { display: none; }
+      .top { padding: 0 16px; height: 64px; }
+      .search--top { display: none; }
+      .scroll { padding: 20px 16px 32px; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      .kpi + .kpi { box-shadow: none; }
+      .kpi:nth-child(even) { box-shadow: -1px 0 0 var(--line); }
+      .kpi:nth-child(n + 3) { box-shadow: 0 -1px 0 var(--line); }
+      .kpi:nth-child(4) { box-shadow: -1px -1px 0 var(--line); }
+      .kpi { padding: 18px; }
+      .kpi__v { font-size: 1.75rem; }
+      .tools { width: 100%; }
+      .tools .search { flex: 1; width: auto; }
+    }
+    @media (max-width: 560px) {
+      .top .btn--primary span { display: none; }
+      .top .btn--primary { width: 44px; padding: 0; }
+      .seg button { padding: 0 12px; }
+      .chart { padding: 18px 16px 14px; }
+      .legend { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-delay: 0ms !important; transition-duration: 0.001ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+    }
+
+    /* ═════════ Portal Superadmin: komponen halaman ═════════ */
+    .view[hidden] { display: none; }
+    .view.is-in { animation: panel-in 0.55s var(--ease) both; }
+    .stack { display: grid; gap: 20px; }
+    .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+    .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .chip--bad { background: #fde8e8; color: #b42318; }
+    .chip .ic { width: 12px; height: 12px; }
+    .side__label.first { border-top: 0; margin-top: 0; }
+    .side__label .live { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
+    .brand__t { display: grid; line-height: 1.15; }
+    .brand__t em { font-style: normal; font-size: 0.75rem; font-weight: 700; color: var(--ink-3); letter-spacing: 0.02em; }
+    .role { margin: 12px 0 0 6px; }
+    .nav-i .chip { padding: 3px 8px; font-size: 0.625rem; letter-spacing: 0.04em; }
+    .nav-i .badge--n { background: var(--blue-tint); color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); }
+    .badge[hidden] { display: none; }
+    .out { margin-left: auto; }
+    .crumb { display: flex; align-items: center; gap: 10px; font-size: 0.9375rem; color: var(--ink-3); font-weight: 500; min-width: 0; }
+    .crumb i { font-style: normal; color: #b3c2d9; }
+    .crumb h1 { font-size: 0.9375rem; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .seg--sm button { height: 30px; padding: 0 12px; font-size: 0.75rem; }
+    .sess { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px; border-radius: 999px; background: var(--ok-bg); color: var(--ok); font-size: 0.8125rem; font-weight: 700; white-space: nowrap; }
+    .sess i { width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
+
+    .ctx > div > h2 + p { margin-top: 6px; }
+    .ctx__r { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .sech { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 10px 0 -4px; }
+    .sech h3 { font-size: 1.125rem; font-weight: 800; letter-spacing: -0.02em; }
+    .sech span { font-size: 0.8125rem; font-weight: 600; color: var(--ink-3); }
+    .pad { padding: 22px 24px; }
+    .pad__h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .pad__h h3 { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
+    .pad__h p { margin-top: 2px; font-size: 0.8125rem; color: var(--ink-3); }
+    .linkbtn { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 6px 0; font-weight: 700; font-size: 0.8125rem; color: var(--blue-ink); }
+    .linkbtn:hover { color: #0a47b3; }
+    .linkbtn .ic { width: 14px; height: 14px; transition: transform 0.3s var(--ease); }
+    .linkbtn:hover .ic { transform: translateX(3px); }
+
+    /* KPI + quick links */
+    .kpi__v small { font-size: 1rem; font-weight: 600; letter-spacing: 0; color: var(--ink-3); }
+    .kpi__d .chip { font-size: 0.6875rem; }
+    .qlinks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+    .qlink { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+    .qlink:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgb(10 26 51 / 0.05), 0 22px 40px -14px rgb(19 102 240 / 0.3); }
+    .qlink b { display: block; font-size: 0.9375rem; }
+    .qlink span.s { display: block; margin-top: 2px; font-size: 0.8125rem; font-weight: 700; color: var(--blue-ink); }
+    .qlink span.s.warn { color: var(--warn); }
+    .qlink span.s.ok { color: var(--ok); }
+    .qlink .ic { color: var(--ink-3); transition: transform 0.3s var(--ease); }
+    .qlink:hover .ic { transform: translateX(3px); color: var(--blue); }
+    .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+    .tiers { display: grid; gap: 16px; }
+    .tierrow { display: grid; gap: 8px; }
+    .tierrow__h { display: flex; align-items: center; gap: 10px; font-size: 0.8125rem; font-weight: 800; letter-spacing: 0.02em; }
+    .tierrow__h i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+    .tierrow__h span { margin-left: auto; font-weight: 700; color: var(--ink-2); }
+    .tierrow p { font-size: 0.8125rem; color: var(--ink-3); }
+    .meter { height: 8px; border-radius: 999px; background: var(--blue-soft); overflow: hidden; }
+    .meter i { display: block; width: var(--w); height: 100%; border-radius: inherit; background: var(--c, var(--blue)); animation: meter 1.1s var(--ease) both; }
+    @keyframes meter { from { width: 0; } to { width: var(--w); } }
+    .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .mini article { display: grid; gap: 4px; padding: 16px; border-radius: var(--r-md); background: var(--blue-tint); }
+    .mini__h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mini b { font-size: 0.9375rem; }
+    .mini small { color: var(--ink-3); font-size: 0.8125rem; }
+    .mini__p { display: flex; align-items: baseline; justify-content: space-between; margin-top: 10px; padding-top: 10px; box-shadow: 0 -1px 0 var(--line); font-size: 0.75rem; font-weight: 600; color: var(--ink-3); }
+    .mini__p b { font-size: 0.875rem; color: var(--ink); }
+
+    /* Timeline */
+    .tl { padding: 0; }
+    .tl li { position: relative; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 14px; padding: 14px 0; box-shadow: 0 1px 0 var(--line); animation: card-in 0.5s var(--ease) both; }
+    .tl li:last-child { box-shadow: none; }
+    .tl .pt { display: grid; place-items: start center; }
+    .tl .pt i { width: 12px; height: 12px; margin-top: 4px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
+    .tl li.org .pt i { background: #10b981; box-shadow: 0 0 0 4px var(--ok-bg); }
+    .tl p { font-size: 0.875rem; color: var(--ink-2); margin-top: 6px; }
+    .tl time { font-size: 0.75rem; font-weight: 600; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    @keyframes card-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* Paket + modul */
+    .tiergrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .tier { display: flex; flex-direction: column; gap: 14px; padding: 24px; transition: opacity 0.3s var(--ease); }
+    .tier.is-off { opacity: 0.6; }
+    .tier__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .tier h3 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
+    .tier p { font-size: 0.875rem; color: var(--ink-2); min-height: 3.1em; }
+    .price { font-size: 1.875rem; font-weight: 800; letter-spacing: -0.03em; color: var(--blue-ink); font-variant-numeric: tabular-nums; }
+    .kv { display: grid; gap: 8px; margin: 0; padding: 14px 0; box-shadow: 0 1px 0 var(--line), 0 -1px 0 var(--line); }
+    .kv div { display: flex; justify-content: space-between; gap: 12px; font-size: 0.875rem; }
+    .kv dt { color: var(--ink-3); font-weight: 600; }
+    .kv dd { margin: 0; font-weight: 800; }
+    .sec { font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+    .ticks2 { display: grid; gap: 10px; flex: 1; align-content: start; font-size: 0.875rem; color: var(--ink-2); font-weight: 500; }
+    .ticks2 li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; }
+    .ticks2 .ic { width: 18px; height: 18px; margin-top: 1px; padding: 2px; border-radius: 50%; background: var(--blue-soft); color: var(--blue-ink); stroke-width: 2.6; }
+    .tier__f { display: flex; gap: 10px; padding-top: 6px; }
+    .tier__f .btn { flex: 1; }
+    .modgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .mcard { display: grid; gap: 14px; align-content: start; padding: 24px; transition: opacity 0.3s var(--ease); }
+    .mcard.is-off { opacity: 0.65; }
+    .mcard__h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mcard h3 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
+    .mcard p { font-size: 0.9375rem; color: var(--ink-2); }
+    .mcard__f { display: flex; align-items: center; gap: 14px; padding-top: 14px; box-shadow: 0 -1px 0 var(--line); }
+    .mcard__f .lbl { font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+    .mcard__f .val { display: block; font-size: 1.125rem; font-weight: 800; color: var(--ok); font-variant-numeric: tabular-nums; }
+    .mcard__f .ev { margin-left: auto; font-size: 0.8125rem; font-weight: 600; color: var(--ink-3); }
+
+    /* Kesehatan sistem */
+    .hero-st { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 26px 28px; }
+    .hero-st h3 { margin-top: 10px; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em; }
+    .hero-st p { margin-top: 6px; color: var(--ink-2); max-width: 68ch; }
+    .hero-st__r { text-align: right; display: grid; gap: 6px; justify-items: end; }
+    .hero-st__r b { font-size: 0.75rem; letter-spacing: 0.08em; color: var(--ok); }
+    .comps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+    .comp { display: grid; gap: 12px; align-content: start; padding: 20px; }
+    .comp__h { display: flex; align-items: center; justify-content: space-between; }
+    .comp__h .tile { width: 40px; height: 40px; }
+    .comp h4 { font-size: 0.9375rem; font-weight: 800; line-height: 1.3; }
+    .comp p { font-size: 0.8125rem; color: var(--ink-3); min-height: 4.2em; }
+    .comp dl { display: grid; gap: 8px; margin: 0; padding-top: 12px; box-shadow: 0 -1px 0 var(--line); }
+    .comp dl div { display: flex; justify-content: space-between; font-size: 0.8125rem; }
+    .comp dt { color: var(--ink-3); font-weight: 600; }
+    .comp dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .comp dd.ok { color: var(--ok); }
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .inc { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; padding: 16px 0; box-shadow: 0 1px 0 var(--line); animation: card-in 0.5s var(--ease) both; }
+    .inc:last-child { box-shadow: none; }
+    .inc h4 { font-size: 0.9375rem; font-weight: 700; }
+    .inc p { grid-column: 2 / -1; font-size: 0.8125rem; color: var(--ink-3); }
+    .inc time { font-size: 0.75rem; font-weight: 600; color: var(--ink-3); white-space: nowrap; }
+
+    /* Tabel + aksi */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; }
+    .toolbar .search { width: 300px; height: 44px; background: #fff; }
+    td.act, th.act { text-align: right; white-space: nowrap; }
+    .acts { display: inline-flex; gap: 8px; align-items: center; }
+    .btn--ok { height: 38px; padding: 0 16px; background: #0a8f5f; color: #fff; font-size: 0.8125rem; box-shadow: 0 8px 18px -8px rgb(10 143 95 / 0.7); }
+    .btn--ok:hover { background: #067a52; }
+    .btn--bad { height: 38px; padding: 0 16px; background: #fff; color: #b42318; font-size: 0.8125rem; box-shadow: inset 0 0 0 1px #f3c4c0; }
+    .btn--bad:hover { background: #fde8e8; }
+    .btn--sm { height: 36px; padding: 0 14px; font-size: 0.8125rem; }
+    .btn--danger { background: #c0392b; color: #fff; }
+    .btn--danger:hover { background: #a82e22; }
+    .cell2 { display: grid; line-height: 1.35; }
+    .cell2 b { font-weight: 700; }
+    .cell2 small { color: var(--ink-3); font-size: 0.75rem; }
+    .act-name { font-weight: 800; font-size: 0.75rem; letter-spacing: 0.04em; color: var(--blue-ink); }
+    .money { font-weight: 800; color: var(--ok); }
+    .tags { display: grid; gap: 6px; justify-items: start; }
+    .tag { padding: 3px 9px; border-radius: 8px; font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.03em; background: var(--ok-bg); color: var(--ok); }
+    .tag.off { background: #eaf0f8; color: var(--ink-3); }
+    tr.is-new { animation: row-in 0.8s var(--ease); }
+    @keyframes row-in { from { background: var(--blue-soft); opacity: 0; transform: translateY(-6px); } to { background: transparent; opacity: 1; transform: none; } }
+    .muted { color: var(--ink-3); font-weight: 600; }
+    .empty-row td { padding: 44px; text-align: center; color: var(--ink-3); font-weight: 600; }
+    .tabs-seg { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; }
+
+    /* Dialog */
+    dialog { border: 0; padding: 0; background: transparent; color: var(--ink); max-width: none; max-height: none; font-family: var(--font); }
+    dialog::backdrop { background: rgb(10 26 51 / 0.38); backdrop-filter: blur(3px); }
+    dialog.modal { width: min(520px, calc(100vw - 32px)); margin: auto; border-radius: var(--r-lg); background: #fff; box-shadow: var(--shadow-lift); }
+    dialog.modal[open] { animation: modal-in 0.45s var(--ease); }
+    @keyframes modal-in { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+    .dlg__h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 24px 0; }
+    .dlg__h h3 { font-size: 1.125rem; font-weight: 800; letter-spacing: -0.02em; }
+    .dlg__b { display: grid; gap: 16px; padding: 18px 24px 8px; max-height: min(70dvh, 560px); overflow: auto; }
+    .dlg__f { display: flex; justify-content: flex-end; gap: 10px; padding: 12px 24px 24px; }
+    .field { display: grid; gap: 8px; }
+    .field label, .field .lab { font-size: 0.8125rem; font-weight: 700; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .in { width: 100%; height: 48px; padding: 0 14px; border: 0; border-radius: var(--r-sm); background: var(--blue-tint); box-shadow: inset 0 0 0 1px var(--line); font-size: 0.9375rem; transition: box-shadow 0.2s var(--ease), background-color 0.2s var(--ease); }
+    textarea.in { height: auto; min-height: 112px; padding: 12px 14px; resize: vertical; line-height: 1.5; }
+    .in:hover { box-shadow: inset 0 0 0 1px #c3d5ee; }
+    .in:focus-visible { outline: none; background: #fff; box-shadow: inset 0 0 0 2px var(--blue), 0 0 0 4px rgb(19 102 240 / 0.14); }
+    .in::placeholder { color: #5f6f88; }
+    .hint { font-size: 0.8125rem; color: var(--ink-3); font-weight: 500; }
+    .err { font-size: 0.8125rem; font-weight: 600; color: var(--warn); }
+    .err:empty { display: none; }
+    .swrow { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; box-shadow: 0 1px 0 var(--line); }
+    .swrow:last-child { box-shadow: none; }
+    .swrow b { display: block; font-size: 0.9375rem; }
+    .swrow span.s { font-size: 0.8125rem; color: var(--ink-3); }
+    .sw { position: relative; flex: none; width: 44px; height: 26px; border: 0; border-radius: 999px; background: #c5d6ee; transition: background-color 0.3s var(--ease); }
+    .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(10 26 51 / 0.25); transition: transform 0.4s var(--ease); }
+    .sw[aria-checked="true"] { background: var(--blue); }
+    .sw[aria-checked="true"]::after { transform: translateX(18px); }
+    .receipt { display: grid; place-items: center; gap: 10px; min-height: 180px; padding: 24px; border-radius: var(--r-md); background: var(--blue-tint); text-align: center; color: var(--ink-3); font-weight: 600; font-size: 0.875rem; }
+    .receipt .ic { width: 36px; height: 36px; color: var(--sky-mid); }
+
+    /* Scan QR */
+    .scangrid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px; align-items: start; }
+    .vf { display: grid; place-items: center; min-height: 190px; padding: 20px; border-radius: var(--r-md); background: var(--ink); color: #b6c7e3; text-align: center; transition: background-color 0.4s var(--ease); }
+    .vf.is-ok { background: #064e3b; }
+    .vf.is-bad { background: #7c2d12; }
+    .vf__in { display: grid; justify-items: center; gap: 6px; font-size: 0.875rem; font-weight: 600; animation: card-in 0.45s var(--ease); }
+    .vf__in strong { font-size: 1.125rem; font-weight: 800; color: #fff; }
+    .vf__in .ic { width: 34px; height: 34px; color: #fff; }
+    .vf.is-ok .vf__in, .vf.is-bad .vf__in { color: rgb(255 255 255 / 0.9); }
+    .scanform { display: flex; gap: 10px; margin-top: 16px; }
+    .scanform .in { flex: 1; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; }
+    .suggest { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .suggest button { height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: var(--blue-tint); box-shadow: inset 0 0 0 1px var(--line); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.03em; color: var(--ink-2); transition: background-color 0.2s var(--ease), color 0.2s var(--ease); }
+    .suggest button:hover { background: var(--blue-soft); color: var(--blue-ink); }
+
+    @media (max-width: 1180px) {
+      .comps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .qlinks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cols, .scangrid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 960px) {
+      .modgrid { grid-template-columns: 1fr; }
+      .sess span { display: none; }
+      .sess { padding: 0 12px; }
+      .toolbar .search { flex: 1; width: auto; }
+    }
+    @media (max-width: 640px) {
+      .comps, .qlinks, .mini, .two { grid-template-columns: 1fr; }
+      .tiergrid { grid-template-columns: 1fr; }
+      .scanform { flex-direction: column; }
+      .tl li { grid-template-columns: 20px minmax(0, 1fr); }
+      .tl time { grid-column: 2; }
+      .inc { grid-template-columns: 1fr; }
+      .inc p { grid-column: 1; }
+      .hero-st__r { justify-items: start; text-align: left; }
+    }
+
+    .no-anim .rise, .no-anim .tl li, .no-anim .inc, .no-anim .meter i { animation: none; }
+    .tl .pt::after { display: none; }
+
+    /* Perbaikan: sidebar tidak melebar, sel tabel tidak pecah */
+    .nav { grid-template-columns: minmax(0, 1fr); }
+    .nav-i { height: auto; min-height: 40px; padding-top: 8px; padding-bottom: 8px; white-space: normal; line-height: 1.3; }
+    .nav-i > span { min-width: 0; }
+    .nav-i .chip, .nav-i .badge { flex: none; }
+    td.mono:first-child, .money, .tag, td .muted { white-space: nowrap; }
+    .cell2 small.mono { white-space: nowrap; }
+
+    .tablecard th, .tablecard td { padding-left: 14px; padding-right: 14px; }
+    .tablecard th:first-child, .tablecard td:first-child { padding-left: 20px; }
+    .tablecard th:last-child, .tablecard td:last-child { padding-right: 20px; }
+    .acts { flex-wrap: nowrap; }
+    .app[data-collapsed] .nav-i { white-space: nowrap; height: 40px; padding-top: 0; padding-bottom: 0; }
+
+    /* Mobile: header + toolbar tidak boleh melebar */
+    .top__l, .top__r { min-width: 0; }
+    .top__r { flex: none; }
+    .toolbar > * { min-width: 0; }
+    .toolbar .seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+    .toolbar .seg::-webkit-scrollbar { display: none; }
+    .toolbar .seg button { white-space: nowrap; }
+    @media (max-width: 960px) {
+      .crumb #crGroup, .crumb i { display: none; }
+      .crumb h1 { font-size: 1rem; }
+      .top__r .sess { display: none; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .toolbar .search { width: 100%; flex: none; min-height: 44px; }
+      .toolbar .seg { flex: none; }
+      .ctx__r { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-mark" viewBox="0 0 24 24"><path d="M6 18.5l6-13 6 13M8.4 14h7.2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12.5 16V8M17 16v-3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 11V4.5A1.5 1.5 0 0 1 4.5 3H11l9.500 9.500a1.500 1.500 0 0 1 0 2.100L14.600 20.500a1.500 1.500 0 0 1-2.100 0z"/><circle cx="8" cy="8" r="1.500"/></symbol>
+  <symbol id="i-game" viewBox="0 0 24 24"><rect x="2.500" y="7" width="19" height="11" rx="4"/><path d="M7 10.500v4M5 12.500h4M15.500 11.500h.01M18 13.500h.01"/></symbol>
+  <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2.500"/><rect x="3" y="13" width="18" height="7" rx="2.500"/><path d="M7 7.500h.01M7 16.500h.01"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="3" width="11" height="18" rx="2"/><path d="M15 9h3a2 2 0 0 1 2 2v10h-5M8 7.500h3M8 11.500h3M8 15.500h3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.500 2.800v5.700c0 4.500-3.100 7.900-7.500 9.500-4.400-1.600-7.500-5-7.500-9.500V5.800z"/><path d="M8.800 12l2.300 2.300 4.200-4.600"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.500h3l1.800-2.500h6.400L17 8.500h3V19H4z"/><circle cx="12" cy="13.500" r="3.300"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M15 8l4 4-4 4M19 12H9"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.500 12S6 5.500 12 5.500 21.500 12 21.500 12 18 18.500 12 18.500 2.500 12 2.500 12z"/><circle cx="12" cy="12" r="2.800"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3.500 12a8.500 8.500 0 0 1 14.600-5.900L20.500 8.500M20.500 4v4.500H16M20.500 12a8.500 8.500 0 0 1-14.600 5.900L3.500 15.500M3.500 20v-4.500H8"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.500"/><path d="M9.500 3v3M14.500 3v3M9.500 18v3M14.500 18v3M3 9.500h3M3 14.500h3M18 9.500h3M18 14.500h3M10 10h4v4h-4z"/></symbol>
+  <symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7.800 7.800a6 6 0 0 0 0 8.400M16.200 7.800a6 6 0 0 1 0 8.400M4.900 4.900a10 10 0 0 0 0 14.200M19.100 4.900a10 10 0 0 1 0 14.200"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.700 3.600 3 8 3s8-1.300 8-3V6M4 12v6c0 1.700 3.600 3 8 3s8-1.300 8-3v-6"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.500A1.500 1.500 0 0 0 8.500 21h7a1.500 1.500 0 0 0 1.500-1.500L18 7M9 7V4.500A1.500 1.500 0 0 1 10.500 3h3A1.500 1.500 0 0 1 15 4.500V7"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.500"/><circle cx="8" cy="17" r="2.500"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.500-6 4 12 2.500-6H21"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.500"/><path d="M2.500 20c0-3.600 2.900-6 6.500-6s6.500 2.400 6.500 6M16 4.700a3.500 3.500 0 0 1 0 6.600M18.200 14.500c2 .8 3.300 2.700 3.300 5.500"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 0 0 6v2.500A1.500 1.500 0 0 0 4.500 19h15a1.500 1.500 0 0 0 1.500-1.500V15a2 2 0 0 1 0-6V6.500A1.500 1.500 0 0 0 19.500 5h-15A1.500 1.500 0 0 0 3 6.500z"/><path d="M14 5v2.500M14 11v2M14 16.500V19"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3.500" y="4.500" width="17" height="15" rx="3"/><path d="M9.500 4.500v15M16 10l-2 2 2 2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 24 24"><path d="M12 5v14M7 14l5 5 5-5"/></symbol>
+</svg>
+
+<div class="app" id="app">
+  <aside class="side" id="side" aria-label="Navigasi utama">
+    <div class="side__top">
+      <a class="brand" href="index.html" aria-label="Antigravity CMS, ke halaman utama">
+        <span class="brand__mark"><svg class="ic"><use href="#i-mark"/></svg></span>
+        <span class="brand__t fade"><b>Antigravity</b><em>CMS</em></span>
+      </a>
+      <button class="icon-btn fade" id="sideToggle" type="button" aria-label="Ciutkan sidebar"><svg class="ic"><use href="#i-panel"/></svg></button>
+    </div>
+    <div class="role fade"><span class="chip">SUPERADMIN</span></div>
+
+    <div class="side__scroll" style="margin-top:14px">
+      <div class="side__label first fade">MENU</div>
+      <div class="nav" style="margin-top:0">
+        <a class="nav-i" href="#overview" data-page="overview"><svg class="ic"><use href="#i-chart"/></svg><span class="fade">Overview &amp; KPI</span></a>
+        <a class="nav-i" href="#pricing" data-page="pricing"><svg class="ic"><use href="#i-tag"/></svg><span class="fade">Kelola Harga &amp; Paket</span><b class="chip fade">LANDING</b></a>
+        <a class="nav-i" href="#addons" data-page="addons"><svg class="ic"><use href="#i-game"/></svg><span class="fade">Modul &amp; Add-on</span></a>
+        <a class="nav-i" href="#system-health" data-page="system-health"><svg class="ic"><use href="#i-server"/></svg><span class="fade">Status &amp; Kendala Sistem</span><b class="chip chip--ok fade">SLA 99.9%</b></a>
+        <a class="nav-i" href="#audit" data-page="audit"><svg class="ic"><use href="#i-doc"/></svg><span class="fade">Log Audit Platform</span><b class="badge badge--n fade" id="b-audit">5</b></a>
+      </div>
+      <div class="side__label fade">ORGANIZER</div>
+      <div class="nav" style="margin-top:0">
+        <a class="nav-i" href="#tenants" data-page="tenants"><svg class="ic"><use href="#i-building"/></svg><span class="fade">Direktori Tenant</span><b class="badge badge--n fade" id="b-tenants">3</b></a>
+      </div>
+      <div class="side__label fade">TRANSACTION</div>
+      <div class="nav" style="margin-top:0">
+        <a class="nav-i" href="#transactions" data-page="transactions"><svg class="ic"><use href="#i-shield"/></svg><span class="fade">Antrean Mutasi</span><b class="badge fade" id="b-tx">1</b></a>
+      </div>
+      <div class="side__label fade"><span>OPERASIONAL LAPANGAN</span><i class="live"></i></div>
+      <div class="nav" style="margin-top:0">
+        <a class="nav-i" href="#scan" data-page="scan"><svg class="ic"><use href="#i-camera"/></svg><span class="fade">Scan QR</span><b class="chip chip--ok fade">PWA</b></a>
+      </div>
+    </div>
+
+    <div class="side__bottom">
+      <div class="user">
+        <span class="avatar" aria-hidden="true">A</span>
+        <span class="user__text fade"><b>Super Administrator</b><span>admin@platform.id</span></span>
+        <button class="icon-btn fade out" id="logoutBtn" type="button" aria-label="Keluar dari sesi"><svg class="ic"><use href="#i-logout"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main" id="main">
+    <header class="top">
+      <div class="top__l">
+        <button class="icon-btn" id="menuBtn" type="button" aria-label="Buka menu" aria-expanded="false"><svg class="ic"><use href="#i-menu"/></svg></button>
+        <nav class="crumb" aria-label="Breadcrumb"><span id="crGroup">Menu</span><i>/</i><h1 id="crTitle">Overview &amp; KPI</h1></nav>
+      </div>
+      <div class="top__r">
+        <div class="seg seg--sm" id="lang" role="radiogroup" aria-label="Bahasa">
+          <span class="seg__thumb" aria-hidden="true"></span>
+          <button type="button" role="radio" aria-checked="true" data-k="id">ID</button>
+          <button type="button" role="radio" aria-checked="false" data-k="en">EN</button>
+        </div>
+        <span class="sess"><i></i><span>Sesi Super Administrator</span></span>
+      </div>
+    </header>
+
+    <div class="scroll" id="scroll">
+      <div class="view" id="v-overview"></div>
+      <div class="view" id="v-pricing" hidden></div>
+      <div class="view" id="v-addons" hidden></div>
+      <div class="view" id="v-system-health" hidden></div>
+      <div class="view" id="v-audit" hidden></div>
+      <div class="view" id="v-tenants" hidden></div>
+      <div class="view" id="v-transactions" hidden></div>
+      <div class="view" id="v-scan" hidden></div>
+    </div>
+  </main>
+</div>
+
+<dialog id="dlg" class="modal"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const fmt = new Intl.NumberFormat("id-ID");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const icon = (id, cls = "ic ic--sm") => `<svg class="${cls}"><use href="#${id}"/></svg>`;
+  const rp = (n) => "Rp " + fmt.format(n);
+  const shortRp = (n) => (n >= 1e6 ? String(Math.round(n / 1e5) / 10) + " Jt" : fmt.format(Math.round(n / 1e3)) + " Rb");
+  const tFmt = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Jakarta" });
+  const when = (iso) => tFmt.format(new Date(iso)).replace(/\./g, ":");
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  /* ═══════════════ DATA ═══════════════
+     Disalin dari tampilan CMS asli (admin-ticketing-system.chameleon.co.id) pada 12 Nov 2026.
+     Ganti blok ini dengan respons API CMS untuk data langsung. */
+  const ME = { actor: "admin@platform.id", role: "SUPERADMIN", ip: "127.0.0.1" };
+  const S = {
+    plans: [
+      { id: "starter", tier: "STARTER", name: "Paket Starter", price: 550000, cap: 250, events: 1, on: true,
+        desc: "Solusi registrasi dan tiket digital esensial untuk seminar, workshop, dan kegiatan komunitas.",
+        feats: ["Formulir Pendaftaran Kustom", "E-Ticket QR Anti-Pemalsuan", "Aplikasi Scanner Smartphone Petugas", "Ekspor Data Peserta ke Excel (.xlsx)", "Dukungan Layanan Standar"] },
+      { id: "pro", tier: "PRO", name: "Paket Professional", price: 1500000, cap: 1500, events: 5, on: true,
+        desc: "Solusi komprehensif untuk konferensi bisnis, festival tahunan, dan expo dengan dukungan multi-petugas gerbang.",
+        feats: ["Seluruh Fitur Paket Starter", "Kustomisasi Tautan & Identitas Acara", "Multi-Petugas Check-In Pintu Masuk", "Prioritas Verifikasi Pembayaran", "Pilihan Modul Hiburan Audiens", "Ekspor Laporan Kehadiran Real-Time"] },
+      { id: "enterprise", tier: "ENTERPRISE", name: "Paket Enterprise", price: 3500000, cap: 10000, events: 999, on: true,
+        desc: "Infrastruktur terdedikasi untuk festival massal, konser musik, dan stadium summit dengan pendampingan langsung.",
+        feats: ["Kapasitas Hingga 10.000+ Pengunjung", "Jumlah Event Tidak Terbatas", "Pendampingan Teknis Langsung di Lokasi Acara", "Paket Lengkap 4 Modul Interaktif", "Kustomisasi Domain & Branding Penuh", "Perjanjian Tingkat Layanan (SLA Resmi)"] },
+    ],
+    modules: [
+      { id: "SPIN_WHEEL", cat: "LUCKY DRAW & DOORPRIZE", name: "Spin Wheel Lucky Draw", short: "Spin Wheel", sub: "Lucky Draw Doorprize", price: 1000000, events: 22, on: true,
+        desc: "Roda putar animasi fisik untuk pengundian doorprize panggung dengan filter kehadiran terverifikasi." },
+      { id: "PHOTO_BINGO", cat: "INTERACTIVE QUEST", name: "Photo Bingo PWA", short: "Photo Bingo", sub: "PWA Quest Challenge", price: 2500000, events: 14, on: true,
+        desc: "Game mini web responsif untuk pengunjung mengunggah foto di booth sponsor demi menyelesaikan kartu bingo." },
+      { id: "PHOTO_WALL", cat: "VISUAL DISPLAY", name: "Interactive Photo Wall Live", short: "Photo Wall", sub: "Live Mosaic Screen", price: 1500000, events: 19, on: true,
+        desc: "Live mosaic foto pameran yang diperbarui instan saat pengunjung memotret dan tag akun Instagram event." },
+      { id: "SPEED_QUIZ", cat: "STAGE GAMIFICATION", name: "Speed Quiz Multi-player", short: "Speed Quiz", sub: "Kahoot-style Trivia", price: 3000000, events: 8, on: true,
+        desc: "Kahoot-style live quiz di layar utama panggung berkapasitas 2.000+ peserta serentak via WebSockets." },
+    ],
+    tenants: [
+      { name: "Nusantara Tech Community", slug: "nusantara-tech-fest", email: "rian@techfest2026.id", plan: "PRO", cap: 1500, events: 5, form: true, scanner: true, excel: true, ev: "Belum buat event", on: true },
+      { name: "Java Developers Indonesia", slug: "java-dev-jakarta", email: "hendra@javadev.id", plan: "STARTER", cap: 500, events: 3, form: true, scanner: true, excel: true, ev: "1 Event Terbit", on: true },
+      { name: "Apex Global Summit Management", slug: "apex-global-summit", email: "sarah@apexevents.id", plan: "STARTER", cap: 500, events: 3, form: true, scanner: true, excel: true, ev: "Belum buat event", on: true },
+    ],
+    tx: [
+      { id: "TRX-2026-9821", org: "Nusantara Tech Community", email: "rian@techfest2026.id", plan: "PRO", amount: 1850000, status: "PENDING" },
+      { id: "TRX-2026-4102", org: "Java Developers Indonesia", email: "hendra@javadev.id", plan: "STARTER", amount: 500000, status: "VERIFIED" },
+      { id: "TRX-2026-1092", org: "Apex Global Summit Management", email: "sarah@apexevents.id", plan: "ENTERPRISE", amount: 3500000, status: "VERIFIED" },
+    ],
+    audit: [
+      { t: "2026-11-12T16:30:48+07:00", actor: "admin@platform.id", role: "SUPERADMIN", action: "VERIFIKASI MUTASI", target: "TRX-TECHFEST-PRO-01", detail: "Verifikasi manual bukti transfer Bank Mandiri Rp 4.000.000 (Paket Pro + Spin Wheel)", status: "SUCCESS", ip: "127.0.0.1" },
+      { t: "2026-11-12T16:17:48+07:00", actor: "rian@techfest2026.id", role: "ORGANIZER", action: "CHECKIN TIKET GERBANG", target: "TK-2026-0001", detail: "Check-in tiket delegasi Budi Santoso di Gerbang Utama Pintu 1", status: "SUCCESS", ip: "192.168.1.42" },
+      { t: "2026-11-12T15:53:48+07:00", actor: "admin@platform.id", role: "SUPERADMIN", action: "UPDATE TENANT ACCESS", target: "Tenant: TechFest Indonesia", detail: "Aktivasi modul gamifikasi Photo Bingo & ekspor Excel kuota peserta", status: "SUCCESS", ip: "127.0.0.1" },
+      { t: "2026-11-12T14:35:48+07:00", actor: "admin@platform.id", role: "SUPERADMIN", action: "UPDATE PRICING CATALOG", target: "Plan: pro", detail: "Penyesuaian batas kapasitas maksimum paket Pro menjadi 1.000 peserta", status: "SUCCESS", ip: "127.0.0.1" },
+      { t: "2026-11-12T12:35:48+07:00", actor: "budi@cloudsummit.id", role: "ORGANIZER", action: "REGISTRASI TENANT BARU", target: "Tenant: PT Cloud Inovasi", detail: "Pendaftaran tenant baru & unggah bukti bayar Paket Starter Rp 1.500.000", status: "SUCCESS", ip: "103.22.45.12" },
+    ],
+    comps: [
+      { ic: "i-server", t: "Core API Gateway & Webhook Engine", d: "Gin HTTP multiplexer dengan JWT HMAC authenticator & CORS filter aktif.", lat: 12, load: "460 req/s", err: "0.01%" },
+      { ic: "i-shield", t: "Enkripsi Kriptografis & HMAC Signer", d: "Mesin penandatangan barcode tiket HMAC-SHA256 & sanitasi Bluemonday XSS.", lat: 1.4, load: "1200 signs/s", err: "0.00%" },
+      { ic: "i-radio", t: "Sinkronisasi Gerbang Masuk (Multi-Gate)", d: "Protokol pencegahan tiket ganda atomik & transmisi telemetri gerbang multi-petugas.", lat: 18, load: "98.4% sukses", err: "0.00%" },
+      { ic: "i-db", t: "Penyimpanan Basis Data & Pool ACID", d: "GORM connection pool terisolasi multi-tenant dengan kepatuhan transaksi ACID.", lat: 2.8, load: "14/100 pool", err: "0.00%" },
+    ],
+    incidents: [
+      { id: "INC-2026-003", sev: "INFO", st: "RESOLVED", t: "Optimasi Kuota Koneksi Pool Database", at: "2026-11-09T14:15:00Z", d: "Kapasitas pool ditingkatkan ke 100 koneksi untuk antisipasi lonjakan pendaftaran." },
+      { id: "INC-2026-002", sev: "INFO", st: "RESOLVED", t: "Penyelarasan Cache Kamera Pemindai PWA", at: "2026-11-09T11:30:00Z", d: "Penyelarasan frame buffer kamera HTML5 scanner untuk perangkat iOS Safari." },
+      { id: "INC-2026-001", sev: "INFO", st: "RESOLVED", t: "Rotasi Kunci Rahasia Signing Barcode Tiket", at: "2026-11-08T09:00:00Z", d: "Rotasi kunci salt HMAC dilakukan secara mulus tanpa mengganggu tiket aktif." },
+    ],
+    // Hanya TK-2026-0001 yang tercatat di CMS asli; dua lainnya adalah contoh agar angka 2 dari 3 hadir konsisten.
+    tickets: [
+      { code: "TK-2026-0001", name: "Budi Santoso", in: true, gate: "Gerbang Utama Pintu 1" },
+      { code: "TK-2026-0002", name: "Delegasi 2 (contoh)", in: true, gate: "Gerbang Utama Pintu 1" },
+      { code: "TK-2026-0003", name: "Delegasi 3 (contoh)", in: false, gate: "" },
+    ],
+    f: { audit: "all", tx: "all", inc: "all" },
+    q: { audit: "", tenants: "", tx: "" },
+    running: false,
+    scan: null,
+  };
+  /* ═══════════════ Akhir data ═══════════════ */
+
+  /* ── Util UI ── */
+  let toastT;
+  const toast = (msg) => {
+    const el = $("#toast");
+    el.innerHTML = icon("i-check") + `<span>${esc(msg)}</span>`;
+    el.classList.add("is-on");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.classList.remove("is-on"), 2800);
+  };
+  const moveThumb = (seg) => {
+    const a = $('[aria-checked="true"]', seg), t = $(".seg__thumb", seg);
+    if (!a || !t) return;
+    t.style.width = `${a.offsetWidth}px`;
+    t.style.transform = `translateX(${a.offsetLeft}px)`;
+  };
+  const syncSegs = (root = document) => $$(".seg", root).forEach(moveThumb);
+  const segHtml = (id, label, items, active) =>
+    `<div class="seg" id="${id}" role="radiogroup" aria-label="${label}"><span class="seg__thumb" aria-hidden="true"></span>${items.map(([k, t]) => `<button type="button" role="radio" aria-checked="${k === active}" data-k="${k}">${t}</button>`).join("")}</div>`;
+  const searchHtml = (id, ph) => `<label class="search"><svg class="ic"><use href="#i-search"/></svg><span class="sr-only">${ph}</span><input id="${id}" type="search" placeholder="${ph}" autocomplete="off"></label>`;
+  const head = (h, p, right = "") => `<div class="ctx"><div><h2>${h}</h2><p><span>${p}</span></p></div><div class="ctx__r">${right}</div></div>`;
+  const planChip = (p) => `<span class="chip chip--mute">${esc(p)}</span>`;
+  const txChip = (s) => `<span class="chip ${{ PENDING: "chip--warn", VERIFIED: "chip--ok", REJECTED: "chip--bad" }[s]}">${s}</span>`;
+  const roleChip = (r) => `<span class="chip ${r === "SUPERADMIN" ? "" : "chip--mute"}">${r}</span>`;
+  const pendingN = () => S.tx.filter((t) => t.status === "PENDING").length;
+  const gmv = () => S.tx.filter((t) => t.status === "VERIFIED").reduce((a, t) => a + t.amount, 0);
+
+  const addAudit = (action, target, detail, who = ME) => {
+    S.audit.unshift({ t: new Date().toISOString(), actor: who.actor, role: who.role, action, target, detail, status: "SUCCESS", ip: who.ip, isNew: true });
+  };
+
+  /* ── Modal ── */
+  const dlg = $("#dlg");
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) dlg.close(); });
+  const swHtml = (name, on, label, sub = "") => `<div class="swrow"><div><b>${label}</b>${sub ? `<span class="s">${sub}</span>` : ""}</div><button class="sw" type="button" role="switch" data-sw="${name}" aria-checked="${on}" aria-label="${label}"></button></div>`;
+  const swVal = (form, name) => $(`[data-sw="${name}"]`, form).getAttribute("aria-checked") === "true";
+  function modal({ title, body, submit = "Simpan", tone = "primary", cancel = "Batal", onSubmit }) {
+    dlg.innerHTML = `<form id="dlgForm" novalidate><div class="dlg__h"><h3>${esc(title)}</h3><button class="icon-btn" type="button" data-close aria-label="Tutup">${icon("i-x", "ic")}</button></div>` +
+      `<div class="dlg__b">${body}<p class="err" id="dlgErr" role="alert"></p></div>` +
+      `<div class="dlg__f">${cancel ? `<button class="btn btn--line" type="button" data-close>${cancel}</button>` : ""}<button class="btn ${tone === "danger" ? "btn--danger" : tone === "ok" ? "btn--ok" : "btn--primary"}" type="submit">${submit}</button></div></form>`;
+    const form = $("#dlgForm", dlg);
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const r = onSubmit ? onSubmit(new FormData(form), form) : true;
+      if (typeof r === "string") { $("#dlgErr", dlg).textContent = r; return; }
+      if (r !== false) dlg.close();
+    });
+    $$(".sw", form).forEach((sw) => sw.addEventListener("click", () => sw.setAttribute("aria-checked", String(sw.getAttribute("aria-checked") !== "true"))));
+    dlg.showModal();
+    const f = $("input, textarea, select", form);
+    (f || $("button[type=submit]", form)).focus();
+  }
+
+  /* ── Router ── */
+  const ROUTES = {
+    overview: ["Menu", "Overview & KPI"],
+    pricing: ["Menu", "Kelola Harga & Paket"],
+    addons: ["Menu", "Modul & Add-on"],
+    "system-health": ["Menu", "Status & Kendala Sistem"],
+    audit: ["Menu", "Log Audit Platform"],
+    tenants: ["Organizer", "Direktori Tenant"],
+    transactions: ["Transaction", "Antrean Mutasi"],
+    scan: ["Operasional Lapangan", "Scan QR"],
+  };
+  const views = {};
+  let current = null;
+  const app = $("#app");
+  const isMobile = () => matchMedia("(max-width: 960px)").matches;
+  const setDrawer = (open) => { app.toggleAttribute("data-drawer", open); $("#menuBtn").setAttribute("aria-expanded", String(open)); };
+
+  const badges = () => {
+    $("#b-audit").textContent = S.audit.length;
+    $("#b-tenants").textContent = S.tenants.length;
+    const p = pendingN(), b = $("#b-tx");
+    b.textContent = p; b.hidden = !p;
+  };
+  const refresh = () => {
+    badges();
+    const v = views[current];
+    if (!v) return;
+    const el = $("#v-" + current);
+    v.update ? v.update(el, false) : v.draw(el, false);
+  };
+  function route() {
+    const name = ROUTES[location.hash.slice(1)] ? location.hash.slice(1) : "overview";
+    if (name === current) return;
+    current = name;
+    $$(".view").forEach((v) => { v.hidden = v.id !== "v-" + name; });
+    const el = $("#v-" + name);
+    el.classList.remove("is-in"); void el.offsetWidth; el.classList.add("is-in");
+    $("#crGroup").textContent = ROUTES[name][0];
+    $("#crTitle").textContent = ROUTES[name][1];
+    document.title = `${ROUTES[name][1]} — Antigravity CMS`;
+    $$("[data-page]").forEach((a) => { const on = a.dataset.page === name; a.classList.toggle("is-active", on); on ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"); });
+    $("#scroll").scrollTo({ top: 0, behavior: "instant" });
+    const v = views[name];
+    if (v.mount) { v.mount(el); v.update(el, true); } else v.draw(el, true);
+    syncSegs(el);
+    badges();
+    if (isMobile()) setDrawer(false);
+  }
+
+  /* ── Hitung naik angka ── */
+  const countUp = (root) => {
+    $$("[data-to]", root).forEach((n) => {
+      const to = Number(n.dataset.to), f = n.dataset.f;
+      const show = (v) => { n.textContent = f === "rp" ? rp(v) : f === "pct" ? v + "%" : fmt.format(v); };
+      if (reduce) return show(to);
+      const t0 = performance.now();
+      const step = (t) => { const k = Math.min(1, (t - t0) / 1000); show(Math.round(to * (1 - Math.pow(1 - k, 4)))); if (k < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    });
+  };
+
+  /* ═════════ OVERVIEW ═════════ */
+  views.overview = {
+    draw(el, anim) {
+      el.classList.toggle("no-anim", !anim);
+      const nOn = S.tenants.filter((t) => t.on).length;
+      const inn = S.tickets.filter((t) => t.in).length;
+      const rate = Math.round((inn / S.tickets.length) * 100);
+      const pend = pendingN();
+      const kpi = (ic, l, val, chip, note, cls = "") => `<div class="kpi"><div class="kpi__l">${icon(ic)}${l}</div><div class="kpi__v num">${val}</div><div class="kpi__d"><span class="chip ${cls}">${chip}</span><span>${note}</span></div></div>`;
+      const num = (n, f = "int") => `<span data-to="${n}" data-f="${f}">${f === "rp" ? rp(n) : f === "pct" ? n + "%" : fmt.format(n)}</span>`;
+      const tierCol = { starter: "#7d8ba3", pro: "#1366f0", enterprise: "#0a1a33" };
+      const tierNm = { starter: "STARTER TIER", pro: "PRO ORGANIZER", enterprise: "ENTERPRISE CUSTOM" };
+      const total = S.tenants.length;
+      const tiers = S.plans.map((p) => {
+        const n = S.tenants.filter((t) => t.plan === p.tier).length;
+        const pct = total ? Math.round((n / total) * 100) : 0;
+        return `<div class="tierrow"><div class="tierrow__h" style="--c:${tierCol[p.id] || "#1366f0"}"><i></i>${esc(tierNm[p.id] || p.name.toUpperCase())} (${shortRp(p.price)}${p.id === "enterprise" ? "+" : ""})<span>${n ? `${n} Tenant (${pct}%)` : "Dalam Penjajakan (0)"}</span></div>` +
+          `<div class="meter" style="--c:${tierCol[p.id] || "#1366f0"}"><i style="--w:${pct}%"></i></div><p>Kuota maks ${fmt.format(p.cap)} peserta/event · ${p.events >= 999 ? "event tidak terbatas" : p.events + " event"}. ${esc(p.feats[0])}.</p></div>`;
+      }).join("");
+      const mods = S.modules.map((m) => `<article><div class="mini__h"><b>${esc(m.short)}</b><span class="chip ${m.on ? "chip--ok" : "chip--mute"}">${m.on ? "Aktif" : "Nonaktif"}</span></div><small>${esc(m.sub)}</small><div class="mini__p"><span>Tarif sewa</span><b class="mono">${rp(m.price)}</b></div></article>`).join("");
+      const acts = S.audit.slice(0, 4).map((a, i) => `<li class="${a.role === "ORGANIZER" ? "org" : ""}" style="animation-delay:${i * 50}ms"><span class="pt"><i></i></span><div><div class="row"><span class="act-name">${esc(a.action)}</span>${roleChip(a.role)}</div><p>${esc(a.detail)}</p></div><time>${when(a.t)}</time></li>`).join("");
+      const q = (r, t, s, c = "") => `<a class="card qlink" href="#${r}"><div><b>${t}</b><span class="s ${c}">${s}</span></div>${icon("i-arrow", "ic")}</a>`;
+      el.innerHTML = `<div class="stack">` +
+        `<section class="card kpis rise" style="--n:0" aria-label="Ringkasan KPI">` +
+        kpi("i-trend", "Gross Platform GMV", num(gmv(), "rp"), "+24.8% MoM", `${S.tx.length} mutasi terdaftar`, "chip--ok") +
+        kpi("i-building", "Penyelenggara / Tenant", `${num(total)} <small>Organisasi</small>`, `${Math.round((nOn / total) * 100)}% Aktif`, "Enterprise nodes") +
+        kpi("i-users", "Delegasi &amp; Peserta", `${num(S.tickets.length)} <small>Tiket Terbit</small>`, "HMAC-SHA256", "Signed barcode") +
+        kpi("i-pulse", "Tingkat Check-in Peserta", num(rate, "pct"), `${inn} dari ${S.tickets.length} Hadir`, "Gerbang Aktif", "chip--ok") +
+        `</section>` +
+        `<div class="qlinks rise" style="--n:1">` +
+        q("transactions", "Antrean Mutasi", pend ? `${pend} Menunggu` : "Tidak ada antrean", pend ? "warn" : "ok") +
+        q("tenants", "Direktori Tenant", `${total} Penyelenggara / Tenant`) +
+        q("system-health", "Status &amp; Kendala Sistem", "99.98% SLA Active", "ok") +
+        q("scan", "Scan QR", "PWA Camera Gate", "ok") + `</div>` +
+        `<div class="cols rise" style="--n:2">` +
+        `<section class="card pad"><div class="pad__h"><div><h3>Distribusi paket berlangganan</h3><p>Komposisi tier tenant aktif di platform</p></div><span class="chip">${total} TENANT TERDAFTAR</span></div><div class="tiers">${tiers}</div></section>` +
+        `<section class="card pad"><div class="pad__h"><div><h3>Adopsi modul gamifikasi panggung</h3><p>Statistik modul interaktif yang disewa tenant</p></div><a class="linkbtn" href="#addons">Modul &amp; Add-on ${icon("i-arrow", "ic")}</a></div><div class="mini">${mods}</div></section></div>` +
+        `<section class="card pad rise" style="--n:3"><div class="pad__h"><div><h3>Aktivitas terkini platform</h3><p>Aksi administratif dan check-in terbaru</p></div><a class="linkbtn" href="#audit">Buka log audit lengkap ${icon("i-arrow", "ic")}</a></div><ul class="tl">${acts}</ul></section>` +
+        `</div>`;
+      if (anim) countUp(el);
+    },
+  };
+
+  /* ═════════ HARGA & PAKET ═════════ */
+  function planModal(p) {
+    const isNew = !p;
+    modal({
+      title: isNew ? "Tambah paket baru" : `Edit ${p.name}`,
+      submit: isNew ? "Buat paket" : "Simpan perubahan",
+      body: (isNew ? `<div class="field"><label for="f-tier">Kode tier</label><input class="in" id="f-tier" name="tier" required maxlength="20" placeholder="Contoh: ENTERPRISE PLUS" style="text-transform:uppercase"></div>` : "") +
+        `<div class="field"><label for="f-name">Nama paket</label><input class="in" id="f-name" name="name" required maxlength="40" value="${isNew ? "" : esc(p.name)}" placeholder="Contoh: Paket Business"></div>` +
+        `<div class="two"><div class="field"><label for="f-price">Harga (Rp)</label><input class="in" id="f-price" name="price" type="number" min="0" step="1000" required value="${isNew ? "" : p.price}"></div>` +
+        `<div class="field"><label for="f-cap">Maks. peserta / event</label><input class="in" id="f-cap" name="cap" type="number" min="1" required value="${isNew ? "" : p.cap}"></div></div>` +
+        `<div class="field"><label for="f-ev">Maks. jumlah event</label><input class="in" id="f-ev" name="events" type="number" min="1" required value="${isNew ? "" : p.events}"></div>` +
+        `<div class="field"><label for="f-desc">Deskripsi</label><textarea class="in" id="f-desc" name="desc" required maxlength="200">${isNew ? "" : esc(p.desc)}</textarea></div>` +
+        `<div class="field"><label for="f-feats">Fitur termasuk (satu per baris)</label><textarea class="in" id="f-feats" name="feats" required>${isNew ? "" : esc(p.feats.join("\n"))}</textarea></div>` +
+        swHtml("on", isNew ? true : p.on, "Paket aktif", "Paket nonaktif tidak tampil di landing page"),
+      onSubmit(fd, form) {
+        const price = Number(fd.get("price")), cap = Number(fd.get("cap")), events = Number(fd.get("events"));
+        const feats = String(fd.get("feats")).split("\n").map((s) => s.trim()).filter(Boolean);
+        if (!(price >= 0) || cap < 1 || events < 1) return "Periksa angka harga, kapasitas, dan jumlah event.";
+        if (!feats.length) return "Isi minimal satu fitur.";
+        if (isNew) {
+          const tier = String(fd.get("tier")).trim().toUpperCase();
+          const id = tier.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          if (S.plans.some((x) => x.id === id)) return "Kode tier itu sudah dipakai.";
+          S.plans.push({ id, tier, name: String(fd.get("name")).trim(), price, cap, events, desc: String(fd.get("desc")).trim(), feats, on: swVal(form, "on") });
+          addAudit("UPDATE PRICING CATALOG", `Plan: ${id}`, `Paket baru ${tier} ditambahkan dengan harga ${rp(price)}`);
+          toast(`Paket ${tier} dibuat`);
+        } else {
+          const old = { price: p.price, cap: p.cap };
+          Object.assign(p, { name: String(fd.get("name")).trim(), price, cap, events, desc: String(fd.get("desc")).trim(), feats, on: swVal(form, "on") });
+          addAudit("UPDATE PRICING CATALOG", `Plan: ${p.id}`, `Pembaruan paket ${p.tier}: harga ${rp(old.price)} menjadi ${rp(price)}, kapasitas ${fmt.format(old.cap)} menjadi ${fmt.format(cap)} peserta`);
+          toast(`${p.name} diperbarui`);
+        }
+        refresh();
+      },
+    });
+  }
+  function rateModal(m) {
+    modal({
+      title: `Ubah tarif ${m.name}`, submit: "Simpan tarif",
+      body: `<div class="field"><label for="f-rate">Tarif sewa / event (Rp)</label><input class="in" id="f-rate" name="rate" type="number" min="0" step="10000" required value="${m.price}"></div><p class="hint">Tarif baru berlaku untuk event yang dibuat setelah perubahan.</p>`,
+      onSubmit(fd) {
+        const v = Number(fd.get("rate"));
+        if (!(v >= 0)) return "Masukkan tarif yang valid.";
+        addAudit("UPDATE PRICING CATALOG", `Addon: ${m.id}`, `Tarif sewa ${m.name} diubah dari ${rp(m.price)} menjadi ${rp(v)}`);
+        m.price = v; toast(`Tarif ${m.short} diperbarui`); refresh();
+      },
+    });
+  }
+  views.pricing = {
+    draw(el) {
+      const tiers = S.plans.map((p) => `<article class="card tier${p.on ? "" : " is-off"}"><div class="tier__top"><span class="chip chip--mute mono">TIER: ${esc(p.tier)}</span><span class="chip ${p.on ? "chip--ok" : "chip--mute"}">${p.on ? "AKTIF" : "NONAKTIF"}</span></div>` +
+        `<div><h3>${esc(p.name)}</h3><div class="price">${rp(p.price)}</div></div><p>${esc(p.desc)}</p>` +
+        `<dl class="kv"><div><dt>Maks. kapasitas</dt><dd>${fmt.format(p.cap)} peserta / event</dd></div><div><dt>Maks. jumlah event</dt><dd>${p.events} event</dd></div></dl>` +
+        `<div class="sec">Fitur termasuk</div><ul class="ticks2">${p.feats.map((f) => `<li>${icon("i-check", "ic")}<span>${esc(f)}</span></li>`).join("")}</ul>` +
+        `<div class="tier__f"><button class="btn btn--line" type="button" data-edit="${p.id}">${icon("i-sliders")}Edit paket</button><button class="icon-btn" type="button" data-del="${p.id}" aria-label="Hapus ${esc(p.name)}">${icon("i-trash", "ic")}</button></div></article>`).join("");
+      const mods = S.modules.map((m) => `<article class="card mcard${m.on ? "" : " is-off"}"><div class="mcard__h"><span class="chip chip--mute mono">${m.id}</span><span class="chip ${m.on ? "chip--ok" : "chip--mute"}">${m.on ? "Tersedia" : "Nonaktif"}</span></div>` +
+        `<h3>${esc(m.name)}</h3><p>${esc(m.desc)}</p><div class="mcard__f"><div><span class="lbl">Tarif sewa / event</span><span class="val mono">${rp(m.price)}</span></div><button class="btn btn--line btn--sm" style="margin-left:auto" type="button" data-rate="${m.id}">Ubah tarif</button></div></article>`).join("");
+      el.innerHTML = head("Katalog tarif paket berlangganan", "Konfigurasi harga paket tier, batas kuota peserta, dan hak akses fitur publik.",
+        `<span class="chip chip--ok">${icon("i-check")}Tersinkron dengan landing</span><button class="icon-btn" type="button" id="pxRefresh" aria-label="Segarkan">${icon("i-refresh", "ic")}</button><button class="btn btn--primary" type="button" id="pxNew">${icon("i-plus")}Tambah paket baru</button>`) +
+        `<div class="stack"><div class="sech"><h3>Paket langganan tenant</h3><span>Total ${S.plans.length} paket terdaftar</span></div><div class="tiergrid">${tiers}</div>` +
+        `<div class="sech" style="margin-top:14px"><h3>Tarif sewa modul gamifikasi interaktif</h3><span>Total ${S.modules.length} modul</span></div><div class="modgrid">${mods}</div></div>`;
+      el.onclick = (e) => {
+        const t = e.target.closest("button");
+        if (!t) return;
+        if (t.id === "pxNew") planModal(null);
+        else if (t.id === "pxRefresh") toast("Katalog diperbarui dari server");
+        else if (t.dataset.edit) planModal(S.plans.find((p) => p.id === t.dataset.edit));
+        else if (t.dataset.rate) rateModal(S.modules.find((m) => m.id === t.dataset.rate));
+        else if (t.dataset.del) {
+          const p = S.plans.find((x) => x.id === t.dataset.del);
+          const used = S.tenants.filter((x) => x.plan === p.tier).length;
+          if (used) { toast(`${p.name} masih dipakai ${used} tenant dan tidak bisa dihapus.`); return; }
+          modal({ title: "Hapus paket?", submit: "Hapus paket", tone: "danger", body: `<p>Paket <b>${esc(p.name)}</b> akan dihapus dari katalog dan landing page. Tindakan ini tidak bisa dibatalkan.</p>`,
+            onSubmit() { S.plans = S.plans.filter((x) => x !== p); addAudit("UPDATE PRICING CATALOG", `Plan: ${p.id}`, `Paket ${p.tier} dihapus dari katalog`); toast(`${p.name} dihapus`); refresh(); } });
+        }
+      };
+    },
+  };
+
+  /* ═════════ MODUL & ADD-ON ═════════ */
+  views.addons = {
+    draw(el) {
+      el.innerHTML = head("Katalog modul gamifikasi &amp; add-on", "Konfigurasi tarif sewa modul interaktif panggung untuk kebutuhan event tenant.") +
+        `<div class="modgrid">` + S.modules.map((m) => `<article class="card mcard${m.on ? "" : " is-off"}"><div class="mcard__h"><span class="chip chip--mute">${esc(m.cat)}</span><span class="chip ${m.on ? "chip--ok" : "chip--mute"}">${m.on ? "AKTIF" : "NONAKTIF"}</span></div>` +
+          `<h3>${esc(m.name)}</h3><p>${esc(m.desc)}</p><div class="mcard__f"><div><span class="lbl">Biaya lisensi / event</span><span class="val mono">${rp(m.price)}</span></div><span class="ev">${m.on ? m.events : 0} Event Aktif</span>` +
+          `<button class="btn ${m.on ? "btn--line" : "btn--primary"} btn--sm" type="button" data-tg="${m.id}">${m.on ? "Nonaktifkan" : "Aktifkan"}</button></div></article>`).join("") + `</div>`;
+      el.onclick = (e) => {
+        const t = e.target.closest("[data-tg]");
+        if (!t) return;
+        const m = S.modules.find((x) => x.id === t.dataset.tg);
+        const flip = () => { m.on = !m.on; addAudit("UPDATE ADDON CATALOG", `Addon: ${m.id}`, `${m.name} ${m.on ? "diaktifkan" : "dinonaktifkan"} untuk seluruh tenant`); toast(`${m.name} ${m.on ? "diaktifkan" : "dinonaktifkan"}`); refresh(); };
+        if (m.on) modal({ title: `Nonaktifkan ${m.name}?`, submit: "Nonaktifkan", tone: "danger", body: `<p>${m.events} event aktif akan kehilangan akses ke modul ini sampai Anda mengaktifkannya lagi.</p>`, onSubmit: flip });
+        else flip();
+      };
+    },
+  };
+
+  /* ═════════ STATUS & KENDALA SISTEM ═════════ */
+  async function runDiag() {
+    if (S.running) return;
+    S.running = true; S.comps.forEach((c) => (c.checking = false)); redrawHealth();
+    for (const c of S.comps) {
+      c.checking = true; redrawHealth();
+      await sleep(reduce ? 80 : 650);
+      c.checking = false;
+      c.lat = Math.round(c.lat * (0.88 + Math.random() * 0.26) * 10) / 10;
+      redrawHealth();
+    }
+    S.running = false; S.lastDiag = new Date().toISOString();
+    addAudit("JALANKAN DIAGNOSTIK", "System Health", "Diagnostik sistem dijalankan: 4 dari 4 komponen sehat");
+    redrawHealth(); badges();
+    toast("Diagnostik selesai: 4 dari 4 komponen sehat.");
+  }
+  const redrawHealth = () => { if (current === "system-health") views["system-health"].draw($("#v-system-health"), false); };
+  views["system-health"] = {
+    draw(el, anim) {
+      el.classList.toggle("no-anim", !anim);
+      const ms = (c) => `${c.lat < 10 ? c.lat.toFixed(1) : Math.round(c.lat)}ms`;
+      const comps = S.comps.map((c) => `<article class="card comp"><div class="comp__h"><span class="chip ${c.checking ? "chip--warn" : "chip--ok"}">${c.checking ? "MEMERIKSA…" : "HEALTHY"}</span><span class="tile">${icon(c.ic, "ic")}</span></div><h4>${esc(c.t)}</h4><p>${esc(c.d)}</p>` +
+        `<dl><div><dt>Latensi respons</dt><dd class="ok">${ms(c)}</dd></div><div><dt>Kapasitas beban</dt><dd>${esc(c.load)}</dd></div><div><dt>Tingkat error</dt><dd class="mono">${esc(c.err)}</dd></div></dl></article>`).join("");
+      const incs = S.incidents.filter((i) => S.f.inc === "all" || i.st === S.f.inc);
+      el.innerHTML = head("Status layanan, infrastruktur &amp; kendala sistem", "Seluruh 4 komponen inti (API Gateway, Enkripsi Kriptografis, Radar Gerbang, dan Basis Data) siap melayani transaksi dan check-in serentak.",
+        `<button class="btn btn--primary" type="button" id="hxRun"${S.running ? " disabled" : ""}>${icon("i-cpu", S.running ? "ic ic--sm spin" : "ic ic--sm")}${S.running ? "Menjalankan…" : "Jalankan diagnostik"}</button><button class="btn btn--line" type="button" id="hxRefresh">${icon("i-refresh")}Segarkan</button>`) +
+        `<div class="stack"><section class="card hero-st"><div><span class="chip chip--ok">TINGKAT KETERSEDIAAN: 99.98% SLA</span><h3>Semua subsistem beroperasi optimal &amp; stabil</h3><p>Seluruh 4 komponen inti siap melayani transaksi dan check-in serentak.${S.lastDiag ? ` Diagnostik terakhir ${when(S.lastDiag)} WIB.` : ""}</p></div><div class="hero-st__r"><span class="muted mono">0 Kendala Aktif</span><b>OPERATIONAL</b></div></section>` +
+        `<div class="comps">${comps}</div>` +
+        `<section class="card pad"><div class="pad__h"><div><h3>Pelacakan kendala &amp; riwayat pemeliharaan sistem</h3><p>Transparansi pemeliharaan server, mitigasi lonjakan trafik, dan catatan resolusi teknis.</p></div>${segHtml("incSeg", "Filter insiden", [["all", "Semua"], ["RESOLVED", "Terselesaikan"], ["MONITORING", "Pemantauan"], ["INVESTIGATING", "Investigasi"]], S.f.inc)}</div>` +
+        (incs.length ? incs.map((i) => `<div class="inc"><div class="row"><span class="chip chip--mute mono">${i.id}</span><span class="chip">${i.sev}</span><span class="chip chip--ok">${i.st}</span></div><h4>${esc(i.t)}</h4><time>${when(i.at)}</time><p>${esc(i.d)}</p></div>`).join("") : `<p class="muted" style="padding:28px 0;text-align:center">Tidak ada insiden pada status ini.</p>`) + `</section></div>`;
+      syncSegs(el);
+      el.onclick = (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.id === "hxRun") runDiag();
+        else if (b.id === "hxRefresh") toast("Status sistem diperbarui");
+        else if (b.dataset.k && b.closest("#incSeg")) { S.f.inc = b.dataset.k; views["system-health"].draw(el); }
+      };
+    },
+  };
+
+  /* ═════════ LOG AUDIT ═════════ */
+  views.audit = {
+    mount(el) {
+      el.innerHTML = head("Log audit &amp; aktivitas administratif platform", "Jejak rekam transparan seluruh aksi administratif, verifikasi mutasi bayar, pembaharuan hak akses, dan check-in gerbang.", `<button class="btn btn--line" type="button" id="auRefresh">${icon("i-refresh")}Segarkan log audit</button>`) +
+        `<div class="toolbar" id="auBar"></div><div class="card tablecard"><div class="tablewrap"><table><thead><tr><th>Waktu</th><th>Aktor &amp; peran</th><th>Aksi administratif</th><th>Target entitas</th><th>Rincian &amp; keterangan</th><th>Status &amp; IP</th></tr></thead><tbody id="auBody"></tbody></table></div><div class="foot-note"><span id="auCount"></span><span>Waktu dalam WIB</span></div></div>`;
+      $("#auBar", el).innerHTML = segHtml("auSeg", "Filter aktor", [["all", "Semua aktor"], ["SUPERADMIN", "Superadmin"], ["ORGANIZER", "Organizer"]], S.f.audit) + searchHtml("auQ", "Cari aktor, aksi, atau target…");
+      $("#auQ", el).value = S.q.audit;
+      $("#auQ", el).addEventListener("input", (e) => { S.q.audit = e.target.value; views.audit.update(el, false); });
+      el.onclick = (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.id === "auRefresh") { toast("Log audit diperbarui"); return; }
+        if (b.dataset.k && b.closest("#auSeg")) {
+          S.f.audit = b.dataset.k;
+          $$("#auSeg button", el).forEach((x) => x.setAttribute("aria-checked", String(x === b)));
+          moveThumb($("#auSeg", el));
+          views.audit.update(el, false);
+        }
+      };
+    },
+    update(el) {
+      const q = S.q.audit.trim().toLowerCase();
+      const rows = S.audit.filter((a) => (S.f.audit === "all" || a.role === S.f.audit) && (!q || [a.actor, a.action, a.target, a.detail].some((s) => s.toLowerCase().includes(q))));
+      $("#auBody", el).innerHTML = rows.length ? rows.map((a) => `<tr${a.isNew ? ' class="is-new"' : ""}><td class="mono" style="white-space:nowrap;font-size:0.8125rem" title="${a.t}">${when(a.t)}</td>` +
+        `<td><div class="cell2"><b>${esc(a.actor)}</b><span>${roleChip(a.role)}</span></div></td><td><span class="act-name">${esc(a.action)}</span></td><td class="mono" style="font-size:0.8125rem">${esc(a.target)}</td>` +
+        `<td style="min-width:240px;color:var(--ink-2)">${esc(a.detail)}</td><td><div class="cell2"><span class="chip chip--ok" style="justify-self:start">${a.status}</span><small class="mono">${esc(a.ip)}</small></div></td></tr>`).join("") : `<tr class="empty-row"><td colspan="6">Tidak ada log yang cocok.</td></tr>`;
+      S.audit.forEach((a) => (a.isNew = false));
+      $("#auCount", el).textContent = `${rows.length} dari ${S.audit.length} entri`;
+    },
+  };
+
+  /* ═════════ DIREKTORI TENANT ═════════ */
+  function accessModal(t) {
+    modal({
+      title: `Atur akses: ${t.name}`, submit: "Simpan akses",
+      body: `<p class="hint">Hak akses fitur untuk <b>${esc(t.name)}</b> (paket ${esc(t.plan)}).</p>` +
+        swHtml("form", t.form, "Form Builder", "Pembuat formulir registrasi visual") + swHtml("scanner", t.scanner, "Scanner", "Aplikasi pemindai petugas gerbang") + swHtml("excel", t.excel, "Ekspor Excel", "Ekspor data peserta ke .xlsx") + swHtml("on", t.on, "Akun aktif", "Akun nonaktif tidak bisa login"),
+      onSubmit(fd, form) {
+        Object.assign(t, { form: swVal(form, "form"), scanner: swVal(form, "scanner"), excel: swVal(form, "excel"), on: swVal(form, "on") });
+        addAudit("UPDATE TENANT ACCESS", `Tenant: ${t.name}`, `Hak akses diperbarui: Form Builder ${t.form ? "aktif" : "nonaktif"}, Scanner ${t.scanner ? "aktif" : "nonaktif"}, Excel ${t.excel ? "aktif" : "nonaktif"}, akun ${t.on ? "aktif" : "nonaktif"}`);
+        toast(`Akses ${t.name} diperbarui`); refresh();
+      },
+    });
+  }
+  views.tenants = {
+    mount(el) {
+      el.innerHTML = head("Direktori tenant &amp; penyelenggara acara", "Pantau seluruh instansi penyelenggara acara yang telah terdaftar di ekosistem platform.", searchHtml("teQ", "Cari nama tenant, slug, atau email…")) +
+        `<div class="card tablecard"><div class="tablewrap"><table><thead><tr><th>Organisasi &amp; slug</th><th>Paket &amp; kuota</th><th>Layanan &amp; add-on</th><th>Event aktif</th><th>Status akun</th><th class="act">Aksi &amp; akses</th></tr></thead><tbody id="teBody"></tbody></table></div><div class="foot-note"><span id="teCount"></span><span>Data tenant dari CMS</span></div></div>`;
+      $("#teQ", el).value = S.q.tenants;
+      $("#teQ", el).addEventListener("input", (e) => { S.q.tenants = e.target.value; views.tenants.update(el, false); });
+      el.onclick = (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        const t = S.tenants.find((x) => x.slug === (b.dataset.acc || b.dataset.pub));
+        if (b.dataset.acc) accessModal(t);
+        else if (b.dataset.pub) toast(`Halaman publik: /e/${t.slug}`);
+      };
+    },
+    update(el) {
+      const q = S.q.tenants.trim().toLowerCase();
+      const rows = S.tenants.filter((t) => !q || [t.name, t.slug, t.email].some((s) => s.toLowerCase().includes(q)));
+      const tag = (l, on) => `<span class="tag${on ? "" : " off"}">${l}: ${on ? "AKTIF" : "NONAKTIF"}</span>`;
+      $("#teBody", el).innerHTML = rows.length ? rows.map((t) => `<tr><td><div class="cell2"><b>${esc(t.name)}</b><small class="mono">/e/${esc(t.slug)}</small><small>${esc(t.email)}</small></div></td>` +
+        `<td><div class="cell2"><span>${planChip(t.plan)}</span><small>Maks: ${fmt.format(t.cap)} delegasi • ${t.events} event</small></div></td>` +
+        `<td><div class="tags">${tag("FORM BUILDER", t.form)}${tag("SCANNER", t.scanner)}${tag("EXCEL", t.excel)}</div></td>` +
+        `<td>${t.ev.startsWith("1") ? `<span class="chip chip--ok">${esc(t.ev)}</span>` : `<span class="muted">${esc(t.ev)}</span>`}</td>` +
+        `<td><span class="chip ${t.on ? "chip--ok" : "chip--mute"}">${t.on ? "AKTIF" : "NONAKTIF"}</span></td>` +
+        `<td class="act"><div class="acts"><button class="btn btn--line btn--sm" type="button" data-acc="${t.slug}">${icon("i-sliders")}Atur akses</button><button class="btn btn--line btn--sm" type="button" data-pub="${t.slug}">${icon("i-ext")}Publik</button></div></td></tr>`).join("") : `<tr class="empty-row"><td colspan="6">Tidak ada tenant yang cocok.</td></tr>`;
+      $("#teCount", el).textContent = `${rows.length} dari ${S.tenants.length} tenant`;
+    },
+  };
+
+  /* ═════════ ANTREAN MUTASI ═════════ */
+  views.transactions = {
+    mount(el) {
+      el.innerHTML = head("Antrean verifikasi mutasi pembayaran", "Tinjau bukti transfer pendaftar paket ticketing &amp; aktivasi kredensial tenant secara instan.", `<button class="btn btn--line" type="button" id="txRefresh">${icon("i-refresh")}Segarkan data</button>`) +
+        `<div class="toolbar" id="txBar"></div><div class="card tablecard"><div class="tablewrap"><table><thead><tr><th>ID transaksi</th><th>Organisasi</th><th>Paket</th><th>Total biaya</th><th>Bukti transfer</th><th>Status</th><th class="act">Aksi</th></tr></thead><tbody id="txBody"></tbody></table></div><div class="foot-note"><span id="txCount"></span><span>GMV terverifikasi: <b id="txGmv"></b></span></div></div>`;
+      $("#txBar", el).innerHTML = segHtml("txSeg", "Filter status", [["all", "Semua"], ["PENDING", "Menunggu verifikasi"], ["VERIFIED", "Terverifikasi"], ["REJECTED", "Ditolak"]], S.f.tx) + searchHtml("txQ", "Cari transaksi / organisasi…");
+      $("#txQ", el).value = S.q.tx;
+      $("#txQ", el).addEventListener("input", (e) => { S.q.tx = e.target.value; views.transactions.update(el, false); });
+      el.onclick = (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.id === "txRefresh") { toast("Antrean mutasi diperbarui"); return; }
+        if (b.dataset.k && b.closest("#txSeg")) { S.f.tx = b.dataset.k; views.transactions.update(el, false); return; }
+        const t = S.tx.find((x) => x.id === (b.dataset.proof || b.dataset.ok || b.dataset.no));
+        if (b.dataset.proof) modal({ title: `Bukti transfer ${t.id}`, cancel: "", submit: "Tutup", body: `<div class="receipt">${icon("i-doc", "ic")}<span>Berkas bukti transfer ${esc(t.org)} (${rp(t.amount)}) dimuat dari server pada CMS asli.</span></div>`, onSubmit: () => true });
+        else if (b.dataset.ok) modal({ title: "Verifikasi & aktifkan?", submit: "Verifikasi & aktifkan", tone: "ok", body: `<p>Pembayaran <b>${rp(t.amount)}</b> dari <b>${esc(t.org)}</b> untuk paket <b>${esc(t.plan)}</b> akan ditandai terverifikasi, kredensial tenant diaktifkan, dan tercatat di log audit.</p>`,
+          onSubmit() {
+            t.status = "VERIFIED";
+            const tn = S.tenants.find((x) => x.name === t.org), pl = S.plans.find((x) => x.tier === t.plan);
+            if (tn && pl) Object.assign(tn, { plan: pl.tier, cap: pl.cap, events: pl.events, on: true });
+            addAudit("VERIFIKASI MUTASI", t.id, `Verifikasi manual bukti transfer ${t.org} ${rp(t.amount)} (Paket ${t.plan})`);
+            toast(`${t.id} terverifikasi`); refresh();
+          } });
+        else if (b.dataset.no) modal({ title: "Tolak mutasi?", submit: "Tolak mutasi", tone: "danger", body: `<div class="field"><label for="f-why">Alasan penolakan (opsional)</label><textarea class="in" id="f-why" name="why" maxlength="160" placeholder="Contoh: nominal transfer tidak sesuai"></textarea></div>`,
+          onSubmit(fd) {
+            t.status = "REJECTED";
+            addAudit("TOLAK MUTASI", t.id, `Mutasi ${t.org} ${rp(t.amount)} ditolak${fd.get("why") ? `: ${String(fd.get("why")).trim()}` : ""}`);
+            toast(`${t.id} ditolak`); refresh();
+          } });
+      };
+    },
+    update(el) {
+      const c = (s) => S.tx.filter((t) => t.status === s).length;
+      const labels = { all: `Semua (${S.tx.length})`, PENDING: `Menunggu verifikasi (${c("PENDING")})`, VERIFIED: `Terverifikasi (${c("VERIFIED")})`, REJECTED: `Ditolak (${c("REJECTED")})` };
+      $$("#txSeg button", el).forEach((x) => { x.textContent = labels[x.dataset.k]; x.setAttribute("aria-checked", String(x.dataset.k === S.f.tx)); });
+      moveThumb($("#txSeg", el));
+      const q = S.q.tx.trim().toLowerCase();
+      const rows = S.tx.filter((t) => (S.f.tx === "all" || t.status === S.f.tx) && (!q || [t.id, t.org, t.email].some((s) => s.toLowerCase().includes(q))));
+      $("#txBody", el).innerHTML = rows.length ? rows.map((t) => `<tr><td class="mono" style="font-weight:700">${t.id}</td><td><div class="cell2"><b>${esc(t.org)}</b><small>${esc(t.email)}</small></div></td><td>${planChip(t.plan)}</td><td class="mono money">${rp(t.amount)}</td>` +
+        `<td><button class="btn btn--line btn--sm" type="button" data-proof="${t.id}">${icon("i-eye")}Lihat bukti</button></td><td>${txChip(t.status)}</td>` +
+        `<td class="act">${t.status === "PENDING" ? `<div class="acts"><button class="btn btn--ok" type="button" data-ok="${t.id}">Verifikasi &amp; aktifkan</button><button class="btn btn--bad" type="button" data-no="${t.id}">Tolak</button></div>` : `<span class="muted">Selesai</span>`}</td></tr>`).join("") : `<tr class="empty-row"><td colspan="7">Tidak ada transaksi pada filter ini.</td></tr>`;
+      $("#txCount", el).textContent = `${rows.length} dari ${S.tx.length} transaksi`;
+      $("#txGmv", el).textContent = rp(gmv());
+    },
+  };
+
+  /* ═════════ SCAN QR ═════════ */
+  function doScan(raw) {
+    const code = raw.trim().toUpperCase();
+    if (!code) return;
+    const tk = S.tickets.find((t) => t.code === code);
+    if (!tk) S.scan = { k: "bad", title: "Kode tidak dikenali", sub: code };
+    else if (tk.in) S.scan = { k: "bad", title: "Tiket sudah digunakan", sub: `${tk.name} · ${tk.gate}` };
+    else {
+      tk.in = true; tk.gate = "Gerbang Utama Pintu 1";
+      S.scan = { k: "ok", title: "Check-in berhasil", sub: `${tk.name} · ${tk.code}` };
+      addAudit("CHECKIN TIKET GERBANG", tk.code, `Check-in tiket ${tk.name} di Gerbang Utama Pintu 1`, { actor: "rian@techfest2026.id", role: "ORGANIZER", ip: "192.168.1.42" });
+    }
+    refresh();
+    const i = $("#scIn"); if (i) i.focus();
+  }
+  views.scan = {
+    draw(el) {
+      const sc = S.scan, inn = S.tickets.filter((t) => t.in).length;
+      const res = sc ? `<div class="vf is-${sc.k}" role="status"><div class="vf__in">${icon(sc.k === "ok" ? "i-check" : "i-x", "ic")}<strong>${esc(sc.title)}</strong><span>${esc(sc.sub)}</span></div></div>` :
+        `<div class="vf"><div class="vf__in">${icon("i-camera", "ic")}<span>Arahkan kamera ke QR tiket atau ketik kodenya</span></div></div>`;
+      el.innerHTML = head("Pemindai gerbang masuk", "Simulasi PWA Camera Gate. Kode tiket divalidasi dan check-in langsung tercatat di log audit.", `<span class="chip chip--ok">${icon("i-radio")}Gerbang aktif</span>`) +
+        `<div class="scangrid"><section class="card pad"><div class="pad__h"><div><h3>Pindai tiket</h3><p>Gerbang Utama Pintu 1</p></div></div>${res}` +
+        `<form class="scanform" id="scForm" autocomplete="off"><label class="sr-only" for="scIn">Kode tiket</label><input class="in" id="scIn" placeholder="TK-2026-0003" maxlength="20"><button class="btn btn--primary" type="submit">${icon("i-scan")}Pindai</button></form>` +
+        `<div class="suggest">${S.tickets.map((t) => `<button type="button" data-code="${t.code}">${t.code}</button>`).join("")}<button type="button" data-code="TK-9999-0000">TK-9999-0000</button></div></section>` +
+        `<section class="card pad"><div class="pad__h"><div><h3>Tiket terbit</h3><p>${inn} dari ${S.tickets.length} delegasi sudah hadir · ${Math.round((inn / S.tickets.length) * 100)}%</p></div></div><div class="meter" style="margin-bottom:18px"><i style="--w:${Math.round((inn / S.tickets.length) * 100)}%"></i></div>` +
+        `<div class="tablewrap"><table style="min-width:0"><thead><tr><th>Kode</th><th>Delegasi</th><th>Status</th></tr></thead><tbody>${S.tickets.map((t) => `<tr><td class="mono" style="font-weight:700">${t.code}</td><td>${esc(t.name)}</td><td>${t.in ? `<span class="chip chip--ok">HADIR</span>` : `<span class="chip chip--mute">BELUM</span>`}</td></tr>`).join("")}</tbody></table></div></section></div>`;
+      $("#scForm", el).addEventListener("submit", (e) => { e.preventDefault(); doScan($("#scIn", el).value); });
+      $$("[data-code]", el).forEach((b) => b.addEventListener("click", () => doScan(b.dataset.code)));
+    },
+  };
+
+  /* ── Sidebar, header, bahasa ── */
+  $("#menuBtn").addEventListener("click", () => setDrawer(!app.hasAttribute("data-drawer")));
+  $("#scrim").addEventListener("click", () => setDrawer(false));
+  $("#sideToggle").addEventListener("click", () => {
+    const c = app.toggleAttribute("data-collapsed");
+    $("#sideToggle").setAttribute("aria-label", c ? "Perluas sidebar" : "Ciutkan sidebar");
+    setTimeout(() => syncSegs(), 650);
+  });
+  $("#logoutBtn").addEventListener("click", () => toast("Keluar dari sesi dinonaktifkan di prototipe."));
+  $$("#lang button").forEach((b) => b.addEventListener("click", () => { if (b.dataset.k === "en") toast("Tampilan English belum tersedia di prototipe."); }));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && app.hasAttribute("data-drawer")) setDrawer(false); });
+  addEventListener("hashchange", route);
+  addEventListener("resize", () => syncSegs());
+
+  badges();
+  route();
+  syncSegs();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => syncSegs());
+})();
+</script>
+</body>
+</html>
