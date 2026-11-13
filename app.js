@@ -12,6 +12,11 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  /* ── Fokus: cincin biru hanya untuk keyboard, bukan klik mouse/sentuh ── */
+  const root = document.documentElement;
+  window.addEventListener("pointerdown", () => root.classList.add("using-pointer"), true);
+  window.addEventListener("keydown", (e) => { if (e.key === "Tab") root.classList.remove("using-pointer"); }, true);
+
   /* ── CMS link ───────────────────────────────────────────── */
   $$("[data-cms]").forEach((a) => (a.href = CMS_URL));
 
@@ -193,6 +198,8 @@
 
   function setVf(state, text, title) {
     clearTimeout(resetTimer);
+    if (state === "idle") vf.classList.remove("has-qr");
+    vf.classList.remove("is-scanning");
     vf.classList.toggle("is-ok", state === "ok");
     vf.classList.toggle("is-dup", state === "dup");
     const ic = state === "ok" ? "i-check" : state === "dup" ? "i-x" : "i-camera";
@@ -216,6 +223,7 @@
       .toUpperCase();
 
   const addHistory = (name, ok, extra) => {
+    if (!historyEl) return;
     const li = document.createElement("li");
     li.className = "is-new";
     li.innerHTML =
@@ -228,12 +236,32 @@
     while (historyEl.children.length > 5) historyEl.lastElementChild.remove();
   };
 
+  // Pindai dulu (QR muncul di bingkai, garis menyapu), baru tampilkan hasilnya.
+  let scanning = false;
+  function scanThen(code, apply) {
+    if (scanning) return;
+    scanning = true;
+    clearTimeout(resetTimer);
+    vf.classList.remove("is-ok", "is-dup");
+    drawQR($("#vf-qr"), code);
+    vf.classList.add("has-qr", "is-scanning");
+    vfMsg.innerHTML = `${icon("i-camera")}<span>Memindai ${code}…</span>`;
+    setTimeout(() => {
+      scanning = false;
+      apply();
+    }, reduceMotion ? 150 : 1200);
+  }
+
   $("#scan-valid").addEventListener("click", () => {
     let t = queue.find((q) => !q.used);
     if (!t) {
       const [name, cat] = pool[poolIdx++ % pool.length];
       t = { name, cat, code: makeCode(name, cat), used: false };
+      queue.push(t);
     }
+    scanThen(t.code, () => finishValid(t));
+  });
+  function finishValid(t) {
     t.used = true;
     t.at = hhmm();
     usedTickets.push(t);
@@ -244,12 +272,14 @@
     }
     setVf("ok", `${t.name} · ${catLabel[t.cat]}`, "Masuk berhasil");
     addHistory(t.name, true);
-  });
+  }
 
   $("#scan-dup").addEventListener("click", () => {
     const t = usedTickets[usedTickets.length - 1] || lastUsed;
-    setVf("dup", `${t.name} sudah dipindai pukul ${t.at || hhmm()}`, "Tiket sudah digunakan");
-    addHistory(t.name, false, "tiket ganda");
+    scanThen(t.code, () => {
+      setVf("dup", `${t.name} sudah dipindai pukul ${t.at || hhmm()}`, "Tiket sudah digunakan");
+      addHistory(t.name, false, "tiket ganda");
+    });
   });
 
   /* ── Pricing: capacity → recommended plan ───────────────── */

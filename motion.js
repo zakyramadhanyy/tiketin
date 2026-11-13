@@ -19,17 +19,14 @@
     [".strip p", "up", 0],
     [".strip li", "scale", 6],
     [".head > *", "head", 3],
-    [".flow > .card:nth-child(1)", "left", 0],
-    [".flow > .card:nth-child(2)", "right", 0],
-    [".bento .card", "scale", 2],
+    [".flow > .card", "up", 2],
     [".assure li", "up", 4],
     [".sizer", "scale", 0],
-    [".plan", "up", 3],
     [".mods .card", "up", 2],
     [".faq__intro > *", "up", 4],
     [".qa", "up", 6],
-    [".closing h2, .closing p, .closing .hero__cta", "up", 3],
-    [".t3d", "scene", 3],
+    [".closing .cta__copy > *", "up", 6],
+    [".cta__media", "scale", 0],
     [".foot__grid > *", "up", 4],
     [".foot__base", "up", 0],
   ];
@@ -76,7 +73,7 @@
 
   /* ── Card tilt (mouse only) ─────────────────────────────── */
   if (finePointer) {
-    [".bento .card", ".mods .card", ".plan"].forEach((sel) =>
+    [".mods .card", ".plan"].forEach((sel) =>
       $$(sel).forEach((el) => (el.dataset.tilt = el.classList.contains("plan") ? "4" : "3"))
     );
     $$("[data-tilt]").forEach((el) => {
@@ -102,6 +99,9 @@
   const hero = $(".hero");
   const stage = $(".hero__stage");
   const closing = $(".closing");
+  const pricing = $(".pricing");
+  const desktopPin = window.matchMedia("(min-width: 1100px)");
+  desktopPin.addEventListener("change", () => { lastY = -1; kick(); });
 
   const parallax = [
     [$(".hero .clouds--back"), -0.1],
@@ -125,6 +125,20 @@
     if (y !== lastY) {
       lastY = y;
       if (hero) hero.style.setProperty("--p", clamp(y / 480, 0, 1).toFixed(3));
+      if (pricing) {
+        if (desktopPin.matches) {
+          // Sticky scroll: section menempel di layar; --pin 0..1 = progres scroll selama menempel.
+          const track = pricing.parentElement.getBoundingClientRect();
+          const run = Math.max(1, track.height - pricing.offsetHeight);
+          const pin = clamp(-track.top / run, 0, 1);
+          pricing.style.setProperty("--pin", pin.toFixed(3));
+          pricing.style.setProperty("--pp", ((0.5 - pin) * 1.4).toFixed(3));
+        } else {
+          const r = pricing.getBoundingClientRect();
+          pricing.style.setProperty("--pin", "1");
+          pricing.style.setProperty("--pp", clamp((r.top + r.height / 2 - vh / 2) / (vh * 0.9), -1, 1).toFixed(3));
+        }
+      }
       parallax.forEach(({ el, speed, host }) => {
         const r = host.getBoundingClientRect();
         if (r.bottom < -200 || r.top > vh + 200) return;

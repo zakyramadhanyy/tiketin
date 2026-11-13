@@ -61,10 +61,9 @@
     </a>
     <nav class="nav__links" aria-label="Utama">
       <a href="#ringkasan">Platform</a>
-      <a href="#alur">Alur Kerja</a>
-      <a href="#fitur">Fitur</a>
-      <a href="#biaya">Biaya</a>
       <a href="#modul">Modul</a>
+      <a href="#alur">Alur Kerja</a>
+      <a href="#biaya">Biaya</a>
     </nav>
     <div class="nav__actions">
       <a class="nav__cms" href="#" data-cms><svg class="icon icon--sm"><use href="#i-cms"/></svg>CMS Organizer</a>
@@ -75,10 +74,9 @@
   </div>
   <div class="nav__panel" id="nav-panel">
     <a href="#ringkasan">Platform</a>
-    <a href="#alur">Alur Registrasi &amp; Check-In</a>
-    <a href="#fitur">Fitur &amp; Keandalan</a>
-    <a href="#biaya">Estimasi Biaya</a>
     <a href="#modul">Modul Interaktif</a>
+    <a href="#alur">Alur Registrasi &amp; Check-In</a>
+    <a href="#biaya">Estimasi Biaya</a>
     <a href="#" data-cms>CMS Organizer</a>
   </div>
 </header>
@@ -91,7 +89,7 @@
 
   <div class="wrap hero__copy">
     <h1 id="hero-title">Manajemen Tiket Acara, dari Registrasi hingga Check-In</h1>
-    <p class="hero__sub">Platform tiket acara yang aman dan terintegrasi: formulir registrasi kustom, e&#8209;tiket QR instan, dan check&#8209;in cepat untuk kerumunan besar.</p>
+    <p class="hero__sub">Peserta daftar lewat form, tiket QR langsung terkirim, dan petugas tinggal scan di pintu masuk.</p>
     <div class="hero__cta">
       <a class="btn btn--light" href="#biaya">Estimasi Biaya Paket</a>
       <a class="btn btn--ghost" href="#alur">Lihat Alur Kerja</a>
@@ -112,6 +110,7 @@
           <span class="side__item"><svg class="icon icon--sm"><use href="#i-users"/></svg>Peserta</span>
           <span class="side__item"><svg class="icon icon--sm"><use href="#i-ticket"/></svg>E-Tiket</span>
           <span class="side__item"><svg class="icon icon--sm"><use href="#i-scan"/></svg>Check-In</span>
+          <span class="side__item side__item--games"><svg class="icon icon--sm"><use href="#i-gift"/></svg>Games<i>Baru</i></span>
           <span class="side__item is-active"><svg class="icon icon--sm"><use href="#i-chart"/></svg>Laporan</span>
         </aside>
         <div class="main" aria-hidden="true">
@@ -149,6 +148,14 @@
       <div><b>Siti Rahmawati</b><span>Masuk berhasil · Pintu 01</span></div>
     </div>
 
+    <div class="hero__game" aria-hidden="true">
+      <div class="hero__game-head"><span class="gi"><svg class="icon"><use href="#i-bolt"/></svg></span><div><b>Speed Quiz</b><span>Live · 7 dari 10 soal</span></div></div>
+      <ol>
+        <li><em>1</em>Rina<b>940</b></li>
+        <li><em>2</em>Dimas<b>880</b></li>
+      </ol>
+    </div>
+
     <article class="hero__ticket" aria-label="Contoh e-tiket resmi">
       <div class="tk">
         <div class="tk__top"><span>Official E-Ticket</span><span class="chip chip--ok">VALID</span></div>
@@ -173,15 +180,82 @@
 <!-- ───────── Capability strip ───────── -->
 <section class="strip" aria-label="Kemampuan platform">
   <div class="wrap">
-    <p>Semua yang dibutuhkan panitia, dalam satu platform</p>
     <ul>
       <li><svg class="icon"><use href="#i-qr"/></svg>QR E-Ticket</li>
       <li><svg class="icon"><use href="#i-scan"/></svg>Validasi Gerbang Cepat</li>
       <li><svg class="icon"><use href="#i-form"/></svg>Form Kustom</li>
+      <!-- Face recognition: tambahkan <li> di sini kalau jadi dipakai -->
+      <li class="is-hl"><a href="#modul"><svg class="icon"><use href="#i-gift"/></svg>Games Interaktif<small>Undian, kuis, foto</small></a></li>
       <li><svg class="icon"><use href="#i-download"/></svg>Ekspor Excel</li>
       <li><svg class="icon"><use href="#i-sync"/></svg>Sinkron Multi-Perangkat</li>
       <li><svg class="icon"><use href="#i-users"/></svg>10.000+ Peserta</li>
     </ul>
+  </div>
+</section>
+
+<!-- ───────── Modul interaktif ───────── -->
+<section class="section section--tint" id="modul" aria-labelledby="modul-title">
+  <div class="wrap">
+    <div class="head">
+      <h2 id="modul-title">Games dan modul interaktif untuk acara Anda</h2>
+      <p>Ajak penonton ikut main, di panggung maupun di booth sponsor. Tampilan di bawah hanya contoh.</p>
+    </div>
+
+    <div class="mods">
+      <article class="card m-1">
+        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-gift"/></svg><h3>Lucky Draw</h3><span class="chip chip--ok">Tersedia</span></div>
+        <p>Roda hadiah animasi yang hanya mengundi peserta terverifikasi, dengan peluang hadiah yang bisa diatur.</p>
+        <div class="mod__art draw">
+          <div class="wheel">
+            <div class="wheel__tilt">
+            <svg class="wheel__pin" viewBox="0 0 22 26" fill="currentColor" aria-hidden="true"><path d="M11 26L1 9a11.5 11.5 0 1 1 20 0z"/><circle cx="11" cy="10" r="4" fill="#fff"/></svg>
+            <div class="wheel__disc"><svg viewBox="0 0 200 200" id="wheel" role="img" aria-label="Roda undian contoh"><g class="wheel__rotor" id="wheel-rotor"></g></svg></div>
+            </div>
+          </div>
+          <div class="draw__out">
+            <div class="winner" id="winner" role="status" aria-live="polite">Tekan <strong>Putar Roda</strong> untuk mengundi peserta terverifikasi (nama contoh).</div>
+            <button class="btn btn--primary" type="button" id="spin">Putar Roda</button>
+          </div>
+        </div>
+        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Lucky Draw" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
+      </article>
+
+      <article class="card m-2">
+        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-image"/></svg><h3>Interactive Photo Wall</h3><span class="chip chip--ok">Tersedia</span></div>
+        <p>Galeri foto langsung di layar panggung, dengan persetujuan organizer sebelum tampil.</p>
+        <div class="mod__art wall" aria-hidden="true">
+          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
+          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
+          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--warn">Menunggu</span></div>
+          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
+          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--warn">Menunggu</span></div>
+          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
+        </div>
+        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Interactive Photo Wall" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
+      </article>
+
+      <article class="card m-3">
+        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-trophy"/></svg><h3>Stage Quiz</h3><span class="chip chip--ok">Tersedia</span></div>
+        <p>Kuis trivia real-time dengan papan skor langsung. Peserta masuk lewat kode QR.</p>
+        <ol class="mod__art board" aria-label="Papan skor contoh">
+          <li style="--w:96%"><span>1</span><span>Rina A.</span><span>980</span></li>
+          <li style="--w:90%"><span>2</span><span>Dimas P.</span><span>940</span></li>
+          <li style="--w:84%"><span>3</span><span>Salsa K.</span><span>910</span></li>
+        </ol>
+        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Stage Quiz" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
+      </article>
+
+      <article class="card m-4">
+        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-flag"/></svg><h3>Photo Quest</h3><span class="chip chip--ok">Tersedia</span></div>
+        <p>Perburuan foto di booth sponsor, dengan validasi otomatis dan pengumuman pemenang real-time.</p>
+        <ul class="mod__art quest" aria-label="Daftar misi contoh">
+          <li><svg class="icon"><use href="#i-camera"/></svg>Booth Sponsor A<span class="chip chip--ok">Tervalidasi</span></li>
+          <li><svg class="icon"><use href="#i-camera"/></svg>Booth Sponsor B<span class="chip chip--ok">Tervalidasi</span></li>
+          <li><svg class="icon"><use href="#i-camera"/></svg>Booth Sponsor C<span class="chip chip--warn">Menunggu foto</span></li>
+        </ul>
+        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Photo Quest" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
+      </article>
+    </div>
   </div>
 </section>
 
@@ -190,7 +264,7 @@
   <div class="wrap">
     <div class="head">
       <h2 id="alur-title">Dari form pendaftaran ke gerbang masuk</h2>
-      <p>Coba sendiri alurnya: daftarkan peserta, terbitkan tiket QR, lalu pindai di gerbang. Semua data di bawah ini adalah simulasi.</p>
+      <p>Empat langkah, dari peserta mengisi form sampai laporan kehadiran. Coba langsung, datanya hanya contoh.</p>
     </div>
 
     <div class="flow">
@@ -217,69 +291,8 @@
           <button class="btn btn--primary btn--block" type="submit">Daftarkan &amp; Terbitkan Tiket</button>
         </form>
 
-        <div class="mini-ticket" id="mini-ticket" aria-live="polite">
-          <div class="tk">
-            <div class="tk__top"><span>E-Tiket Peserta</span><span class="chip" id="mt-status">TERDAFTAR</span></div>
-            <div class="tk__body">
-              <dl>
-                <div><dt>Peserta</dt><dd id="mt-name">Budi Hartanto</dd></div>
-                <div><dt>Kategori</dt><dd id="mt-cat">VIP</dd></div>
-                <div><dt>Kode Tiket</dt><dd class="tk__code tk__code--ink" id="mt-code">TCK-VIP-BUD-2026</dd></div>
-              </dl>
-              <svg class="tk__qr" id="mt-qr" data-qr="TCK-VIP-BUD-2026" viewBox="0 0 25 25" role="img" aria-label="Contoh kode QR (simulasi)"></svg>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- Step 2 -->
-      <article class="card">
-        <span class="step"><b>2</b>Pemindaian di gerbang</span>
-        <h3>Scan tiket dengan kamera smartphone</h3>
-        <p>Tanpa scanner khusus. Tiket yang sudah dipakai langsung ditolak.</p>
-
-        <div class="scanner">
-          <div class="scanner__head">
-            <b>Pintu 01</b>
-            <span class="chip chip--ok" id="gate-state">Siap memindai</span>
-          </div>
-          <div class="viewfinder" id="viewfinder">
-            <span class="viewfinder__line"></span>
-            <div class="viewfinder__msg" id="vf-msg" role="status" aria-live="polite">
-              <svg class="icon"><use href="#i-camera"/></svg>
-              <span>Arahkan kamera ke QR tiket</span>
-            </div>
-          </div>
-          <div class="scan-actions">
-            <button class="btn btn--primary" type="button" id="scan-valid">Simulasi Tiket Valid</button>
-            <button class="btn btn--soft" type="button" id="scan-dup">Simulasi Tiket Ganda</button>
-          </div>
-          <div class="history">
-            <div class="history__title"><span>Riwayat scan</span><span class="chip chip--mute">Tersinkron</span></div>
-            <ul id="history">
-              <li><span class="avatar">SR</span><div class="who"><b>Siti Rahmawati</b><span>Pintu 01 · 09:41</span></div><span class="chip chip--ok">Masuk</span></li>
-              <li><span class="avatar">AS</span><div class="who"><b>Andi Saputra</b><span>Pintu 01 · 09:38</span></div><span class="chip chip--ok">Masuk</span></li>
-            </ul>
-          </div>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ───────── Fitur & keandalan ───────── -->
-<section class="section section--tint" id="fitur" aria-labelledby="fitur-title">
-  <div class="wrap">
-    <div class="head">
-      <h2 id="fitur-title">Dirancang untuk event berskala besar</h2>
-      <p>Empat tahap yang saling terhubung, dari pertanyaan pertama di form sampai laporan kehadiran di tangan panitia.</p>
-    </div>
-
-    <div class="bento">
-      <article class="card b-a">
-        <h3>Form registrasi kustom</h3>
-        <p>Pertanyaan fleksibel dengan validasi dan perlindungan anti-spam, sesuai kebutuhan acara Anda.</p>
-        <div class="art">
+        <div class="builder-box">
+          <div class="sec-label">Pertanyaan yang bisa diatur</div>
           <div class="builder" aria-hidden="true">
             <div class="builder__row"><span class="grip"></span><b>Nama Lengkap</b><span class="chip">Wajib</span></div>
             <div class="builder__row"><span class="grip"></span><b>Kategori Akses</b><span class="chip">Pilihan</span></div>
@@ -289,34 +302,74 @@
         </div>
       </article>
 
-      <article class="card b-b">
+      <!-- Step 2 -->
+      <article class="card">
+        <span class="step"><b>2</b>Tiket terkirim</span>
         <h3>QR e-ticket unik</h3>
-        <p>Dikirim otomatis lewat email setelah disetujui, dengan barcode anti-pemalsuan.</p>
-        <div class="art">
-          <div class="mail" aria-hidden="true">
-            <div class="mail__row"><svg class="icon icon--sm"><use href="#i-mail"/></svg>Tiket terkirim ke email peserta</div>
-            <div class="mail__card">
-              <svg class="tk__qr" data-qr="TCK-VIP-BUD-2026-B" viewBox="0 0 25 25"></svg>
-              <div><b>Nusantara Summit 2026</b><span>VIP Access Pass</span></div>
+        <p>Setelah panitia menyetujui, tiket dikirim lewat email lengkap dengan barcode anti-pemalsuan.</p>
+        <div class="mail-row"><svg class="icon icon--sm"><use href="#i-mail"/></svg>Tiket terkirim ke email peserta</div>
+        <div class="phone-wrap">
+          <div class="phone" role="img" aria-label="Mockup smartphone yang menampilkan e-tiket peserta">
+            <div class="phone__screen">
+              <div class="phone__status" aria-hidden="true"><span>09:41</span><span class="phone__island"></span><span class="phone__sys"><svg viewBox="0 0 18 12"><path d="M1 10h2V8H1zM5 10h2V6H5zM9 10h2V4H9zM13 10h2V1h-2z"/></svg><svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3.500" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="2"/><path d="M24 4v4" stroke="currentColor" opacity=".5"/></svg></span></div>
+              <div class="phone__app"><b>Tiket saya</b><span class="chip" id="mt-status">TERDAFTAR</span></div>
+              <div class="wallet mini-ticket" id="mini-ticket" aria-live="polite">
+                <div class="wallet__top">
+                  <small>Nusantara Summit 2026</small>
+                  <strong id="mt-cat">VIP</strong>
+                </div>
+                <svg class="wallet__qr" id="mt-qr" data-qr="TCK-VIP-BUD-2026" viewBox="0 0 25 25" role="img" aria-label="Contoh kode QR (simulasi)"></svg>
+                <dl class="wallet__dl">
+                  <div><dt>Peserta</dt><dd id="mt-name">Budi Hartanto</dd></div>
+                  <div><dt>Kode tiket</dt><dd class="tk__code--ink mono" id="mt-code">TCK-VIP-BUD-2026</dd></div>
+                </dl>
+              </div>
+              <div class="phone__home" aria-hidden="true"></div>
             </div>
           </div>
         </div>
       </article>
 
-      <article class="card b-c">
-        <h3>Scan gerbang cepat</h3>
-        <p>Petugas memindai dengan kamera smartphone. Beberapa petugas gerbang bisa bekerja bersamaan.</p>
-        <div class="art">
-          <div class="gates" aria-hidden="true">
-            <div class="gates__row"><span class="avatar">A</span>Pintu 01<span class="chip chip--ok">Aktif</span></div>
-            <div class="gates__row"><span class="avatar">B</span>Pintu 02<span class="chip chip--ok">Aktif</span></div>
+      <!-- Step 3 -->
+      <article class="card">
+        <span class="step"><b>3</b>Pemindaian di gerbang</span>
+        <h3>Scan tiket dengan kamera smartphone</h3>
+        <p>Tanpa scanner khusus. Tiket yang sudah dipakai langsung ditolak.</p>
+
+        <div class="scanner">
+          <div class="phone-wrap">
+            <div class="phone" role="group" aria-label="Mockup smartphone petugas dengan pemindai QR">
+              <div class="phone__screen">
+                <div class="phone__status" aria-hidden="true"><span>09:41</span><span class="phone__island"></span><span class="phone__sys"><svg viewBox="0 0 18 12"><path d="M1 10h2V8H1zM5 10h2V6H5zM9 10h2V4H9zM13 10h2V1h-2z"/></svg><svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3.500" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="2"/><path d="M24 4v4" stroke="currentColor" opacity=".5"/></svg></span></div>
+                <div class="phone__app"><b>Pintu 01</b><span class="chip chip--ok" id="gate-state">Siap memindai</span></div>
+                <div class="viewfinder" id="viewfinder">
+                  <div class="vf-frame" aria-hidden="true">
+                    <i class="vf-c vf-tl"></i><i class="vf-c vf-tr"></i><i class="vf-c vf-bl"></i><i class="vf-c vf-br"></i>
+                    <div class="vf-qrwrap"><svg class="vf-qr" id="vf-qr" viewBox="0 0 25 25"></svg></div>
+                    <span class="viewfinder__line"></span>
+                  </div>
+                  <div class="viewfinder__msg" id="vf-msg" role="status" aria-live="polite">
+                    <svg class="icon"><use href="#i-camera"/></svg>
+                    <span>Arahkan kamera ke QR tiket</span>
+                  </div>
+                </div>
+                <div class="phone__hint" aria-hidden="true">Tanpa scanner khusus</div>
+                <div class="phone__home" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+          <div class="scan-actions">
+            <button class="btn btn--primary" type="button" id="scan-valid">Simulasi Tiket Valid</button>
+            <button class="btn btn--soft" type="button" id="scan-dup">Simulasi Tiket Ganda</button>
           </div>
         </div>
       </article>
 
+      <!-- Step 4 -->
       <article class="card b-d">
-        <h3>Laporan kehadiran</h3>
-        <p>Data kehadiran terpusat, bisa diunduh dalam format Excel (.xlsx) dengan satu klik.</p>
+        <span class="step"><b>4</b>Laporan kehadiran</span>
+        <h3>Data kehadiran terpusat</h3>
+        <p>Pantau check-in per jam dan unduh sebagai Excel (.xlsx) dengan satu klik.</p>
         <div class="art">
           <div class="report" aria-hidden="true">
             <div class="report__top"><b>Check-in per jam (data contoh)</b><span class="btn btn--soft btn--sm"><svg class="icon icon--sm"><use href="#i-download"/></svg>Unduh .xlsx</span></div>
@@ -326,6 +379,21 @@
             <div class="bars-axis"><span>08.00</span><span>10.00</span><span>12.00</span><span>14.00</span><span>16.00</span></div>
           </div>
         </div>
+        <div class="builder-box">
+          <div class="sec-label">Gerbang aktif (beberapa petugas sekaligus)</div>
+          <div class="gates" aria-hidden="true">
+            <div class="gates__row"><span class="avatar">A</span><span class="gate-name"><b>Pintu 01</b><small>Gerbang Utama · Reguler</small></span><span class="chip chip--ok">Aktif</span></div>
+            <div class="gates__row"><span class="avatar">B</span><span class="gate-name"><b>Pintu 02</b><small>Gerbang VIP & VVIP</small></span><span class="chip chip--ok">Aktif</span></div>
+            <div class="gates__row"><span class="avatar">C</span><span class="gate-name"><b>Pintu 03</b><small>Gerbang Selatan · Reguler</small></span><span class="chip chip--ok">Aktif</span></div>
+            <div class="gates__row"><span class="avatar">D</span><span class="gate-name"><b>Pintu 04</b><small>Pintu Media & Pers</small></span><span class="chip chip--ok">Aktif</span></div>
+            <div class="gates__row"><span class="avatar">E</span><span class="gate-name"><b>Pintu 05</b><small>Pintu Panitia & Sponsor</small></span><span class="chip chip--ok">Aktif</span></div>
+          </div>
+        </div>
+        <dl class="stat3" aria-label="Ringkasan kehadiran (data contoh)">
+          <div><dt>Terdaftar</dt><dd>8.240</dd></div>
+          <div><dt>Check-in</dt><dd>6.482</dd></div>
+          <div><dt>Kehadiran</dt><dd>79%</dd></div>
+        </dl>
       </article>
     </div>
 
@@ -345,7 +413,7 @@
     <div class="wrap">
       <div class="head">
         <h2 id="biaya-title">Estimasi biaya sesuai kapasitas</h2>
-        <p>Geser untuk memperkirakan jumlah peserta. Kami merekomendasikan paket yang paling pas.</p>
+        <p>Geser sesuai perkiraan jumlah peserta, nanti kami tunjukkan paket yang cocok.</p>
       </div>
 
       <div class="sizer">
@@ -410,72 +478,6 @@
   </div>
 </section>
 
-<!-- ───────── Modul interaktif ───────── -->
-<section class="section section--tint" id="modul" aria-labelledby="modul-title">
-  <div class="wrap">
-    <div class="head">
-      <h2 id="modul-title">Modul interaktif untuk audiens Anda</h2>
-      <p>Buat penonton ikut terlibat di atas panggung maupun di area sponsor. Tampilan di bawah adalah contoh.</p>
-    </div>
-
-    <div class="mods">
-      <article class="card m-1">
-        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-gift"/></svg><h3>Lucky Draw</h3><span class="chip chip--ok">Tersedia</span></div>
-        <p>Roda hadiah animasi yang hanya mengundi peserta terverifikasi, dengan peluang hadiah yang bisa diatur.</p>
-        <div class="mod__art draw">
-          <div class="wheel">
-            <div class="wheel__tilt">
-            <svg class="wheel__pin" viewBox="0 0 22 26" fill="currentColor" aria-hidden="true"><path d="M11 26L1 9a11.5 11.5 0 1 1 20 0z"/><circle cx="11" cy="10" r="4" fill="#fff"/></svg>
-            <div class="wheel__disc"><svg viewBox="0 0 200 200" id="wheel" role="img" aria-label="Roda undian contoh"><g class="wheel__rotor" id="wheel-rotor"></g></svg></div>
-            </div>
-          </div>
-          <div class="draw__out">
-            <div class="winner" id="winner" role="status" aria-live="polite">Tekan <strong>Putar Roda</strong> untuk mengundi peserta terverifikasi (nama contoh).</div>
-            <button class="btn btn--primary" type="button" id="spin">Putar Roda</button>
-          </div>
-        </div>
-        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Lucky Draw" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
-      </article>
-
-      <article class="card m-2">
-        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-image"/></svg><h3>Interactive Photo Wall</h3><span class="chip chip--ok">Tersedia</span></div>
-        <p>Galeri foto langsung di layar panggung, dengan persetujuan organizer sebelum tampil.</p>
-        <div class="mod__art wall" aria-hidden="true">
-          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
-          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
-          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--warn">Menunggu</span></div>
-          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
-          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--warn">Menunggu</span></div>
-          <div><svg class="icon"><use href="#i-image"/></svg><span class="chip chip--ok">Tampil</span></div>
-        </div>
-        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Interactive Photo Wall" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
-      </article>
-
-      <article class="card m-3">
-        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-trophy"/></svg><h3>Stage Quiz</h3><span class="chip chip--ok">Tersedia</span></div>
-        <p>Kuis trivia real-time dengan papan skor langsung. Peserta masuk lewat kode QR.</p>
-        <ol class="mod__art board" aria-label="Papan skor contoh">
-          <li style="--w:96%"><span>1</span><span>Rina A.</span><span>980</span></li>
-          <li style="--w:90%"><span>2</span><span>Dimas P.</span><span>940</span></li>
-          <li style="--w:84%"><span>3</span><span>Salsa K.</span><span>910</span></li>
-        </ol>
-        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Stage Quiz" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
-      </article>
-
-      <article class="card m-4">
-        <div class="mod__head"><svg class="icon mod__icon"><use href="#i-flag"/></svg><h3>Photo Quest</h3><span class="chip chip--ok">Tersedia</span></div>
-        <p>Perburuan foto di booth sponsor, dengan validasi otomatis dan pengumuman pemenang real-time.</p>
-        <ul class="mod__art quest" aria-label="Daftar misi contoh">
-          <li><svg class="icon"><use href="#i-camera"/></svg>Booth Sponsor A<span class="chip chip--ok">Tervalidasi</span></li>
-          <li><svg class="icon"><use href="#i-camera"/></svg>Booth Sponsor B<span class="chip chip--ok">Tervalidasi</span></li>
-          <li><svg class="icon"><use href="#i-camera"/></svg>Booth Sponsor C<span class="chip chip--warn">Menunggu foto</span></li>
-        </ul>
-        <div class="mod__foot"><span class="demo-note">Tampilan contoh</span><a class="btn btn--soft btn--sm" href="#" data-wa-mod="Photo Quest" target="_blank" rel="noopener">Ajukan Minat Modul</a></div>
-      </article>
-    </div>
-  </div>
-</section>
-
 <!-- ───────── FAQ ───────── -->
 <section class="section" id="faq" aria-labelledby="faq-title">
   <div class="wrap faq">
@@ -517,30 +519,43 @@
 <section class="section--panel" id="kontak" aria-labelledby="kontak-title">
   <div class="panel closing">
     <div class="clouds clouds--back" aria-hidden="true"></div>
-    <div class="scene3d" aria-hidden="true">
-      <div class="scene3d__in">
-        <div class="t3d t3d--a">
-          <div class="t3d__top"><span>VIP Access Pass</span><svg class="icon icon--sm"><use href="#i-ticket"/></svg></div>
-          <div class="t3d__name">Nusantara<br>Summit 2026</div>
-          <div class="t3d__perf"></div>
-          <svg class="t3d__qr" data-qr="TCK-VIP-NSN-2026" viewBox="0 0 25 25"></svg>
-          <div class="t3d__code">TCK-VIP-NSN-2026</div>
-        </div>
-        <div class="t3d t3d--b">
-          <div class="t3d__top"><span>Regular</span><svg class="icon icon--sm"><use href="#i-ticket"/></svg></div>
-          <div class="t3d__name">Nusantara<br>Summit 2026</div>
-          <div class="t3d__perf"></div>
-          <svg class="t3d__qr" data-qr="TCK-REG-NSN-2026" viewBox="0 0 25 25"></svg>
-          <div class="t3d__code">TCK-REG-NSN-2026</div>
+    <div class="bgfx" aria-hidden="true">
+      <i class="bgfx__glow"></i>
+      <i class="bgfx__ring r1"></i><i class="bgfx__ring r2"></i>
+    </div>
+    <div class="wrap cta">
+      <div class="cta__copy">
+        <span class="cta__eyebrow">Konsultasi paket</span>
+        <h2 id="kontak-title">Mau mulai?</h2>
+        <p>Ceritakan acara Anda, nanti kami bantu pilih paketnya.</p>
+        <ul class="cta__points">
+          <li><svg class="icon icon--sm"><use href="#i-check"/></svg>Bantu hitung kebutuhan peserta</li>
+          <li><svg class="icon icon--sm"><use href="#i-check"/></svg>Pilih modul games yang cocok</li>
+          <li><svg class="icon icon--sm"><use href="#i-check"/></svg>Ngobrol lewat WhatsApp atau email</li>
+        </ul>
+        <div class="hero__cta">
+          <a class="btn btn--light" href="#" data-wa-general target="_blank" rel="noopener"><svg class="icon icon--sm"><use href="#i-phone"/></svg>Hubungi via WhatsApp</a>
+          <a class="btn btn--ghost" href="mailto:support@platform.id"><svg class="icon icon--sm"><use href="#i-mail"/></svg>Kirim Email</a>
         </div>
       </div>
-    </div>
-    <div class="wrap">
-      <h2 id="kontak-title">Siap menjalankan event Anda?</h2>
-      <p>Ceritakan kebutuhan acara Anda dan tim kami akan membantu memilih paket yang paling sesuai.</p>
-      <div class="hero__cta">
-        <a class="btn btn--light" href="#" data-wa-general target="_blank" rel="noopener"><svg class="icon icon--sm"><use href="#i-phone"/></svg>Hubungi via WhatsApp</a>
-        <a class="btn btn--ghost" href="mailto:support@platform.id"><svg class="icon icon--sm"><use href="#i-mail"/></svg>Kirim Email</a>
+      <!-- Slot visual: bisa diganti foto acara (img.cta__photo) kalau sudah ada -->
+      <div class="cta__media" aria-hidden="true">
+        <div class="cta__plate"></div>
+        <div class="phone cta__phone">
+          <div class="phone__screen">
+            <div class="phone__status"><span>09:41</span><span class="phone__island"></span><span class="phone__sys"></span></div>
+            <div class="phone__app"><b>Tiket saya</b><span class="chip">TERDAFTAR</span></div>
+            <div class="wallet">
+              <div class="wallet__top"><small>Nusantara Summit 2026</small><strong>VIP</strong></div>
+              <svg class="wallet__qr" data-qr="TCK-VIP-CTA-2026" viewBox="0 0 25 25"></svg>
+              <dl class="wallet__dl"><div><dt>Peserta</dt><dd>Budi Hartanto</dd></div></dl>
+            </div>
+            <div class="phone__home"></div>
+          </div>
+        </div>
+        <div class="cta__chip cta__chip--a"><span class="tick"><svg class="icon"><use href="#i-check"/></svg></span><div><b>Siti Rahmawati</b><span>Masuk berhasil · Pintu 01</span></div></div>
+        <div class="cta__chip cta__chip--b"><span class="gi"><svg class="icon"><use href="#i-bolt"/></svg></span><div><b>Speed Quiz</b><span>Live · 7 dari 10 soal</span></div></div>
+        <div class="cta__chip cta__chip--c"><span class="gi"><svg class="icon"><use href="#i-gift"/></svg></span><div><b>Lucky Draw</b><span>3 pemenang terpilih</span></div></div>
       </div>
     </div>
   </div>
@@ -554,20 +569,20 @@
     <div class="foot__grid">
       <div class="foot__brand">
         <a class="brand" href="#ringkasan"><span class="brand__mark"><svg class="icon"><use href="#i-mark"/></svg></span>Antigravity</a>
-        <p>Platform manajemen tiket acara yang aman dan terintegrasi. Dapatkan kabar fitur dan layanan terbaru.</p>
-        <form class="subscribe" id="subscribe" novalidate>
+        <p>Platform tiket acara untuk registrasi, e-tiket QR, check-in, dan games interaktif.</p>
+        <form class="subscribe" id="subscribe" novalidate hidden>
           <label class="sr-only" for="sub-email">Alamat email</label>
           <input class="input" id="sub-email" type="email" placeholder="Email Anda" autocomplete="email" required>
           <button class="btn btn--primary btn--sm" type="submit">Kirim</button>
         </form>
-        <div class="sub-msg" id="sub-msg" role="status" aria-live="polite"></div>
+        <div class="sub-msg" id="sub-msg" hidden role="status" aria-live="polite"></div>
       </div>
 
       <div class="foot__col">
         <h4>Solusi Produk</h4>
         <ul>
-          <li><a href="#fitur">Visual Form Builder</a></li>
-          <li><a href="#fitur">E-Ticket QR Generator</a></li>
+          <li><a href="#alur">Visual Form Builder</a></li>
+          <li><a href="#alur">E-Ticket QR Generator</a></li>
           <li><a href="#alur">PWA Mobile Scanner</a></li>
           <li><a href="#">Halaman Demo Event</a></li>
         </ul>

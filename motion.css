@@ -86,6 +86,9 @@
 .motion .hero__ticket {
   transform: translateZ(90px) rotateY(-7deg) rotateZ(1.5deg);
 }
+.motion .hero__game {
+  transform: translateZ(70px) rotateY(6deg) rotateZ(-1deg);
+}
 .motion .hero__scan {
   transform: translateZ(56px) rotateY(5deg);
 }
@@ -104,24 +107,13 @@
 .strip li {
   perspective: 500px;
 }
+/* Ikon strip kemampuan: datar */
 .strip li .icon {
-  border-radius: 16px;
-  background: linear-gradient(150deg, #ffffff 0%, #e6f0ff 52%, #cfe2ff 100%);
-  box-shadow:
-    inset 0 1px 0 #fff,
-    inset 0 -3px 6px rgb(19 102 240 / 0.1),
-    0 2px 0 #b6d0f6,
-    0 14px 20px -8px rgb(19 102 240 / 0.4);
-  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+  border-radius: 14px;
+  background: var(--blue-soft);
+  box-shadow: none;
 }
-.strip li:hover .icon {
-  transform: translateY(-4px) rotateX(14deg) rotateY(-14deg);
-  box-shadow:
-    inset 0 1px 0 #fff,
-    inset 0 -3px 6px rgb(19 102 240 / 0.1),
-    6px 3px 0 #b6d0f6,
-    10px 22px 24px -10px rgb(19 102 240 / 0.45);
-}
+.strip li:hover .icon { transform: none; box-shadow: none; }
 
 /* ───────── 3D bar chart ───────── */
 
@@ -324,120 +316,76 @@
   block-size: auto;
 }
 
-/* ───────── Closing: floating 3D tickets ───────── */
+/* ───────── Closing: latar lapis, elemen transparan ───────── */
 
-.closing .wrap {
-  position: relative;
-  z-index: 1;
-}
-.scene3d {
+.closing .wrap { position: relative; z-index: 1; }
+.bgfx {
   position: absolute;
   inset: 0;
   z-index: 0;
-  perspective: 1300px;
   pointer-events: none;
+  transform: translate(calc(var(--cx, 0) * -12px), calc(var(--cy, 0) * -8px));
+  transition: transform 0.4s var(--ease);
 }
-.scene3d__in {
+.bgfx__glow {
   position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateY(calc(var(--cx, 0) * 7deg)) rotateX(calc(var(--cy, 0) * -5deg));
+  left: 50%;
+  top: 42%;
+  width: min(920px, 90%);
+  aspect-ratio: 1.6;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.06) 60%, transparent);
 }
-.t3d {
+.bgfx__ring {
   position: absolute;
-  width: 208px;
-  padding: 18px;
-  border-radius: 20px;
-  background: #fff;
-  color: var(--ink);
-  transform-style: preserve-3d;
-  animation: bob 9s ease-in-out infinite;
+  left: 50%;
+  top: 44%;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  transform: translate(-50%, -50%);
 }
-.t3d::before,
-.t3d::after {
-  content: "";
+.bgfx__ring.r1 { width: 520px; height: 520px; }
+.bgfx__ring.r2 { width: 860px; height: 860px; border-color: rgb(255 255 255 / 0.12); }
+.bgfx__ring.r3 { width: 1240px; height: 1240px; border-color: rgb(255 255 255 / 0.07); }
+.ft {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
+  display: grid;
+  place-items: center;
+  width: var(--s, 64px);
+  height: var(--s, 64px);
+  border-radius: calc(var(--s, 64px) * 0.3);
+  background: linear-gradient(150deg, rgb(255 255 255 / 0.26), rgb(255 255 255 / 0.08));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28), 0 18px 30px -18px rgb(4 24 90 / 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  opacity: var(--o, 0.7);
+  animation: bob 9s ease-in-out var(--dl, 0s) infinite;
 }
-.t3d::before {
-  background: #cfe0f8;
-  transform: translateZ(-5px);
-}
-.t3d::after {
-  background: #9fc0ee;
-  transform: translateZ(-10px);
-  box-shadow: 0 40px 56px -22px rgb(4 24 90 / 0.55);
-}
-.t3d--a {
-  left: 5%;
-  top: 70px;
-  transform: translateZ(40px) rotateY(24deg) rotateX(6deg) rotateZ(-7deg);
-}
-.t3d--b {
-  right: 5%;
-  top: 150px;
-  width: 224px;
-  animation-delay: -4s;
-  transform: translateZ(70px) rotateY(-26deg) rotateX(8deg) rotateZ(6deg);
-}
-.t3d__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.t3d__name {
-  margin-top: 10px;
-  font-size: 1.125rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-.t3d__perf {
-  margin: 14px -18px;
-  border-top: 2px dashed #d5e3f6;
-}
-.t3d__qr {
-  display: block;
-  width: 96px;
-  height: 96px;
-  margin: 0 auto;
-  color: var(--ink);
-}
-.t3d__code {
-  margin-top: 10px;
-  text-align: center;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--ink-3);
-}
-@keyframes bob {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -14px;
-  }
-}
-@media (max-width: 1099px) {
-  .scene3d {
-    display: none;
-  }
+.ft .icon { width: 44%; height: 44%; stroke-width: 1.6; }
+.ft--1 { left: 11%; top: 16%; --s: 76px; --o: 0.85; }
+.ft--2 { left: 21%; top: 58%; --s: 56px; --o: 0.5; --dl: -3s; }
+.ft--3 { left: 7%; top: 46%; --s: 44px; --o: 0.32; --dl: -6s; }
+.ft--4 { right: 11%; top: 19%; --s: 60px; --o: 0.6; --dl: -2s; }
+.ft--5 { right: 20%; top: 56%; --s: 78px; --o: 0.85; --dl: -5s; }
+.ft--6 { right: 6%; top: 44%; --s: 42px; --o: 0.3; --dl: -8s; }
+@keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+@media (max-width: 899px) {
+  .ft--2, .ft--3, .ft--6, .bgfx__ring.r3 { display: none; }
+  .ft--1 { left: 5%; top: 8%; --s: 56px; }
+  .ft--4 { right: 6%; top: 10%; --s: 46px; }
+  .ft--5 { right: 7%; top: auto; bottom: 150px; --s: 54px; }
+  .bgfx__ring.r1 { width: 380px; height: 380px; }
+  .bgfx__ring.r2 { width: 620px; height: 620px; }
 }
 
 /* ───────── Reduced motion: keep depth, drop movement ───────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .t3d,
+  .ft,
+  .cta__chip,
   .hero__ticket,
+  .hero__game,
   .hero__scan {
     animation: none !important;
   }
@@ -453,4 +401,35 @@ html {
   .motion [data-reveal="right"] {
     translate: 0 36px;
   }
+}
+
+/* ───────── Harga: satu layar, paralaks berlapis ───────── */
+
+.pricing { --pp: 0; }
+.pricing .head,
+.pricing .sizer,
+.pricing .plan { position: relative; }
+.pricing .head  { top: calc(var(--pp, 0) * -22px); }
+.pricing .sizer { top: calc(var(--pp, 0) * -40px); }
+.pricing .plan:nth-child(1) { top: calc(var(--pp, 0) * -54px); }
+.pricing .plan:nth-child(2) { top: calc(var(--pp, 0) * -76px); }
+.pricing .plan:nth-child(3) { top: calc(var(--pp, 0) * -54px); }
+
+/* ───────── Harga: sticky scroll (desktop) ─────────
+   Section menempel selama ±1,4 layar scroll; kartu paket muncul satu per satu mengikuti --pin (0..1). */
+@media (min-width: 1100px) {
+  .motion #biaya.section--panel { height: calc(max(100svh, 780px) + 110svh); }
+  .motion .panel.pricing {
+    position: sticky;
+    top: 16px;
+    height: calc(max(100svh, 780px) - 32px);
+    min-height: 0;
+  }
+  .motion .pricing .plan {
+    opacity: clamp(0, calc((var(--pin, 1) - var(--d, 0)) * 6), 1);
+  }
+  .motion .pricing .plan:nth-child(1) { --d: 0.03; }
+  .motion .pricing .plan:nth-child(2) { --d: 0.2; }
+  .motion .pricing .plan:nth-child(3) { --d: 0.37; }
+  .motion .pricing .plans { pointer-events: auto; }
 }
