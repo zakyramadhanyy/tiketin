@@ -2619,3 +2619,19 @@ fieldset.field {
 }
 
 .subscribe[hidden], .sub-msg[hidden] { display: none !important; }
+
+/* CTA penutup: ukuran lebih ringkas */
+.closing { padding: clamp(56px, 6vw, 80px) 0 clamp(120px, 11vw, 150px); }
+.closing h2 { font-size: clamp(2.125rem, 4vw, 3.125rem); }
+.closing p { margin-top: 14px; font-size: 1rem; }
+.cta__points { gap: 8px; margin-top: 18px; font-size: 0.875rem; }
+.closing .hero__cta { margin-top: 24px; }
+.cta__media { min-height: 340px; }
+.cta__phone { width: 184px; }
+.cta__phone .wallet__qr { width: 92px; height: 92px; }
+.cta__chip { padding: 8px 14px 8px 8px; font-size: 0.75rem; }
+.cta__chip .tick, .cta__chip .gi { width: 28px; height: 28px; }
+@media (max-width: 899px) { .cta__media { min-height: 360px; } }
+.cta__phone { width: 244px; zoom: 0.8; }
+.cta__phone .wallet__qr { width: 120px; height: 120px; }
+
